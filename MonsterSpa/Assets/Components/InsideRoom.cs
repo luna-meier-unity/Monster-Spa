@@ -4,7 +4,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 [Serializable]
-public struct Temperature : IComponentData
+public struct InsideRoom : IComponentData
 {
-    public float Value;
+    public Entity RoomEntity;
 }

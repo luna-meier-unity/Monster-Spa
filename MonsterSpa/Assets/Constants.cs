@@ -13,17 +13,11 @@ public class Constants : MonoBehaviour
 
     public float TemperatureMin;
     public float TemperatureMax;
-    /// <summary>
-    /// Temperature slowly drifts towards the default.
-    /// </summary>
-    public float TemperatureDefault;
+
     /// <summary>
     /// Rate at which the temperature tends towards the default.
     /// </summary>
     public float TemperatureNormalizeRate;
-
-    public float TemperatureGainSauna;
-    public float TemperatureLossBath;
     
     // Start is called before the first frame update
     void Start()
