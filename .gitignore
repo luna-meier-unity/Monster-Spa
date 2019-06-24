@@ -1,8 +1,16 @@
 [Ll]ibrary/
+[Ll]ogs/
 [Tt]emp/
 [Oo]bj/
 [Bb]uild/
 [Bb]uilds/
+.idea/
+
+t?
+p?
+
+**/Assets/Plugins/
+**/Assets/Plugins.meta
 Assets/AssetStoreTools*
 
 # Visual Studio cache directory
