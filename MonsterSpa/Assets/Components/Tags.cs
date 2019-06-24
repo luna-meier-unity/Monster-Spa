@@ -4,4 +4,5 @@ using Unity.Entities;
 using Unity.Mathematics;
 
 
-public struct Tag_ : IComponentData{}
+public struct Tag_InsideSauna : IComponentData{}
+public struct Tag_InsideColdBath : IComponentData{}
