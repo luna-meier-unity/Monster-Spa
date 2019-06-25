@@ -7,7 +7,7 @@ public class ConvertMonster : MonoBehaviour, IConvertGameObjectToEntity
 {
     public void Convert(Entity entity, EntityManager entityManager, GameObjectConversionSystem conversionSystem)
     {
-        var room = new InsideRoom();
-        //room.RoomEntity = 
+        entityManager.AddComponent(entity,typeof(InsideRoom));
+        
     }
 }

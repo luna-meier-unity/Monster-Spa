@@ -10,11 +10,13 @@ public class GameMgr : MonoBehaviour
 {
     public static GameMgr g;
     public List<Entity> rooms = new List<Entity>();
+    public List<Entity> monsters = new List<Entity>();
     public GameObject lobby;
     public GameObject sauna;
     public GameObject hotTub;
     public GameObject coldBath;
     public GameObject cafe;
+    public GameObject monster;
     
     
     // Start is called before the first frame update
@@ -37,6 +39,11 @@ public class GameMgr : MonoBehaviour
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
+        
+        var monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(monster, World.Active);
+        monsters.Add(entityManager.Instantiate(monEnt));
+        
+        entityManager.SetComponentData(monsters[0], new InsideRoom(){RoomEntity = rooms[0]}); //room 0 is lobby!
 
     }
 
