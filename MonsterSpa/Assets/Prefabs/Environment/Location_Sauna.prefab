@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8643674158466077449}
   m_Layer: 0
-  m_Name: LavaRocks_Big
+  m_Name: Location_Sauna
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -24,7 +24,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2335705621024678194}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 1.27, y: 0, z: 1.04}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
   - {fileID: 3688074205462494100}
@@ -38,11 +38,6 @@ PrefabInstance:
   m_Modification:
     m_TransformParent: {fileID: 8643674158466077449}
     m_Modifications:
-    - target: {fileID: -927199367670048503, guid: e773997d5cbe64cc1953b2cd33c2b33e,
-        type: 3}
-      propertyPath: m_Name
-      value: Env_Location_Sauna
-      objectReference: {fileID: 0}
     - target: {fileID: -4216859302048453862, guid: e773997d5cbe64cc1953b2cd33c2b33e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -97,6 +92,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -927199367670048503, guid: e773997d5cbe64cc1953b2cd33c2b33e,
+        type: 3}
+      propertyPath: m_Name
+      value: Env_Location_Sauna
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: e773997d5cbe64cc1953b2cd33c2b33e, type: 3}

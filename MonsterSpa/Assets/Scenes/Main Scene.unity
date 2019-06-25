@@ -129,6 +129,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 472130770}
+  - component: {fileID: 472130771}
   m_Layer: 0
   m_Name: ExitPos
   m_TagString: Untagged
@@ -150,6 +151,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &472130771
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 472130769}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dd3bc7248b0be409d8d598113e4f0d3e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -458,8 +471,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1505133058}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 5.3238, y: 0.23841, z: 8.5628}
+  m_LocalPosition: {x: 0, y: -0.23841, z: 0}
+  m_LocalScale: {x: 5.3238, y: 0.23841, z: 10.551939}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 4
@@ -494,12 +507,16 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lobby: {fileID: 3323478065141093650, guid: 091fb89c5c38947dcb84bec5fdfa5065, type: 3}
-  sauna: {fileID: 4079765578693770740, guid: 88c2ed9c81ea64054a28806be0d79f3a, type: 3}
+  sauna: {fileID: 2335705621024678194, guid: 9c0e0ef3dfc2a46d8bb7a9649e6189dd, type: 3}
   hotTub: {fileID: 162818934049672952, guid: c31ed19b014e640c9b8ad0ed2bb3b798, type: 3}
   coldBath: {fileID: 2148557846153670123, guid: 6707a3ee0b00b4996b065378d128cb84,
     type: 3}
   cafe: {fileID: 8161142126431491256, guid: 74d0f0404db754823879619c7a5d5c66, type: 3}
-  monster: {fileID: 4779150490070706111, guid: 11a4b26ba886b4ff6abe7ddbb1f15403, type: 3}
+  Chick: {fileID: 4779150490070706111, guid: 7ccc500d0fde0476a81cd924b5261aa4, type: 3}
+  Ghost: {fileID: 4779150490070706111, guid: c8de20e8e46664005a9afece9d01d018, type: 3}
+  Sandal: {fileID: 4779150490070706111, guid: c74faf720b99249d0b8e3a02e3692993, type: 3}
+  Hundun: {fileID: 4779150490070706111, guid: ee7ceb40282b841dc9a7702b7bfd0967, type: 3}
+  spawnrate: 1
 --- !u!4 &2091770499
 Transform:
   m_ObjectHideFlags: 0

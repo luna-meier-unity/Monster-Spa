@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 4779150490070706109}
   - component: {fileID: 4779150490070706110}
   m_Layer: 0
-  m_Name: Gelatinous_Cube
+  m_Name: Hundun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
