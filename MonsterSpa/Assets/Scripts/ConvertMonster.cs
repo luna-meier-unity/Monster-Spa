@@ -9,5 +9,17 @@ public class ConvertMonster : MonoBehaviour, IConvertGameObjectToEntity
     {
         entityManager.AddComponent(entity,typeof(InsideRoom));
         
+        
+        var hunger = new HungerLevel();
+        var happy = new HappinessLevel();
+        var temperature = new Temperature();
+        var timeRemaining = new TimeToLeave();
+        
+        
+        entityManager.AddComponentData(entity, hunger);
+        entityManager.AddComponentData(entity, happy);
+        entityManager.AddComponentData(entity, temperature);
+        entityManager.AddComponentData(entity, timeRemaining);
+        
     }
 }

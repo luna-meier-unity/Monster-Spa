@@ -9,7 +9,7 @@ public class ConvertRoom : MonoBehaviour, IConvertGameObjectToEntity
     {
         var roomTag = new Tag_Room();
 
-        var temp = new Temperature();
+        var temp = new RoomTemperature();
         temp.Value = temprature;
         
         var name = new RoomName();
