@@ -33,6 +33,9 @@ public class GameMgr : MonoBehaviour
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(sauna, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
+        
+        
+        //these will be unlocked later, and should be removed from here when the time comes.
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(hotTub, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(coldBath, World.Active);
@@ -40,6 +43,8 @@ public class GameMgr : MonoBehaviour
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
         
+        
+        //monsters should just come inside over time
         var monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(monster, World.Active);
         monsters.Add(entityManager.Instantiate(monEnt));
         
