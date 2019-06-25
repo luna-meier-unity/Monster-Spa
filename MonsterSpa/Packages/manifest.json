@@ -5,6 +5,7 @@
     "com.unity.collab-proxy": "1.2.16",
     "com.unity.entities": "0.0.12-preview.33",
     "com.unity.package-manager-ui": "2.1.2",
+    "com.unity.physics": "0.1.0-preview",
     "com.unity.purchasing": "2.0.6",
     "com.unity.rendering.hybrid": "0.0.1-preview.13",
     "com.unity.textmeshpro": "2.0.1",
@@ -39,5 +40,6 @@
     "com.unity.modules.vr": "1.0.0",
     "com.unity.modules.wind": "1.0.0",
     "com.unity.modules.xr": "1.0.0"
-  }
+  },
+  "registry": "https://staging-packages.unity.com"
 }
