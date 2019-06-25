@@ -232,7 +232,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e23aed5b9ac12f741aaa068da0afc64f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  TimeToFade: 5
+  TimeToFade: 1
   PercentThroughTransition: 0
   currentSection: 0
   currentLine: 0

@@ -177,37 +177,54 @@ public class DialogueManager : MonoBehaviour
         {
             if (currentLine == Sections[currentSection].LineGroups.Length)
             {
-                state = DialogueState.Hidden;
-                currentLine = 0;
-                Sections[currentSection].MainElement.SetActive(false);
-                currentSection++;
-            }
-            else
-            {
                 if (PercentThroughTransition < TimeToFade)
                 {
+                    PercentThroughTransition = TimeToFade;
                     foreach (var trans in Transitions)
                     {
                         trans.SetAlpha(1);
                     }
                 }
-                
-                Transitions.Clear();
-                
-                foreach (var go in Sections[currentSection].LineGroups[currentLine])
+                else
                 {
-                    go.SetActive(true);
-
-                    var trans = new Transition(go);
-                    
-                    trans.SetAlpha(0);
-                    
-                    Transitions.Add(trans);
+                    state = DialogueState.Hidden;
+                    currentLine = 0;
+                    Sections[currentSection].MainElement.SetActive(false);
+                    currentSection++;
                 }
+            }
+            else
+            {
+                if (PercentThroughTransition < TimeToFade)
+                {
+                    PercentThroughTransition = TimeToFade;
+                    foreach (var trans in Transitions)
+                    {
+                        trans.SetAlpha(1);
+                    }
+                }
+                else
+                {
 
-                PercentThroughTransition = 0;
 
-                currentLine++;
+
+                    Transitions.Clear();
+
+                    foreach (var go in Sections[currentSection].LineGroups[currentLine])
+                    {
+                        go.SetActive(true);
+
+                        var trans = new Transition(go);
+
+                        trans.SetAlpha(0);
+
+                        Transitions.Add(trans);
+                    }
+
+                    PercentThroughTransition = 0;
+
+                    currentLine++;
+                }
             }
         }
 
