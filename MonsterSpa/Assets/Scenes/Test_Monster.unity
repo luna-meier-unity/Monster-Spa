@@ -386,7 +386,7 @@ PrefabInstance:
     - target: {fileID: 4779150490070706105, guid: c74faf720b99249d0b8e3a02e3692993,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -2.679
       objectReference: {fileID: 0}
     - target: {fileID: 4779150490070706105, guid: c74faf720b99249d0b8e3a02e3692993,
         type: 3}
@@ -625,17 +625,17 @@ PrefabInstance:
     - target: {fileID: 4079765578693770740, guid: 88c2ed9c81ea64054a28806be0d79f3a,
         type: 3}
       propertyPath: m_Name
-      value: Mon_Sauna
+      value: Location_Sauna
       objectReference: {fileID: 0}
     - target: {fileID: 4079765578693770736, guid: 88c2ed9c81ea64054a28806be0d79f3a,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: -2.705
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 4079765578693770736, guid: 88c2ed9c81ea64054a28806be0d79f3a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 4079765578693770736, guid: 88c2ed9c81ea64054a28806be0d79f3a,
         type: 3}
@@ -681,6 +681,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4079765578693770739, guid: 88c2ed9c81ea64054a28806be0d79f3a,
+        type: 3}
+      propertyPath: m_Center.y
+      value: -0.5
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 88c2ed9c81ea64054a28806be0d79f3a, type: 3}
