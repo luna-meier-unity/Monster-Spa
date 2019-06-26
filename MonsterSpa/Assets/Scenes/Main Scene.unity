@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.44479233, g: 0.49434215, b: 0.57354015, a: 1}
+  m_IndirectSpecularColor: {r: 0.44479266, g: 0.4943424, b: 0.5735404, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -6378,7 +6378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lobby: {fileID: 3323478065141093650, guid: 091fb89c5c38947dcb84bec5fdfa5065, type: 3}
-  sauna: {fileID: 2335705621024678194, guid: 9c0e0ef3dfc2a46d8bb7a9649e6189dd, type: 3}
+  sauna: {fileID: 4079765578693770740, guid: 88c2ed9c81ea64054a28806be0d79f3a, type: 3}
   hotTub: {fileID: 162818934049672952, guid: c31ed19b014e640c9b8ad0ed2bb3b798, type: 3}
   coldBath: {fileID: 2148557846153670123, guid: 6707a3ee0b00b4996b065378d128cb84,
     type: 3}
