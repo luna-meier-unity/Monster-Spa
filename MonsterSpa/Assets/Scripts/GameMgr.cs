@@ -29,6 +29,8 @@ public class GameMgr : MonoBehaviour
     public static GameMgr g;
     public List<Entity> rooms = new List<Entity>();
     public static List<Entity> monsters = new List<Entity>();
+    
+    //Prefabs
     public GameObject lobby;
     public GameObject sauna;
     public GameObject hotTub;
