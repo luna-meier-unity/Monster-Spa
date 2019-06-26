@@ -180,32 +180,53 @@ public class GameMgr : MonoBehaviour
         var monsterBuff = entityManager.GetBuffer<Monster>(room);
         var numMons = monsterBuff.Length;
         var iterateAngle = (360.0f / roomSpotComp.Value) * (math.PI/180);
+        var intervalAngle = iterateAngle;
         var finalPos = new float3(0,0,0);
-        float posx = (float) Math.Cos(iterateAngle);
-        float posz = (float) Math.Sin(iterateAngle);
+        float posx = 0;
+        float posz = 0;
+        
 
-        finalPos = roomPos + new float3(posx, 0.0f, posz); //dispite its name, we want to take its initial value.
-        for (int i = 0; i < numMons; i++)
+        for (int j = 0; j < roomSpotComp.Value; j++) //for each of our spots, check if there is an entity in that spot
         {
-            var dv = entityManager.GetComponentData<Translation>(monsterBuff[i].Value).Value - finalPos;
-            //if monsterBuff[i]
-            
-            Vector3 vectordv = (Vector3) dv;
-            if ( vectordv.magnitude < 0.5f)
+            posx = (float) Math.Cos(iterateAngle);
+            posz = (float) Math.Sin(iterateAngle);
+            finalPos = roomPos + new float3(posx, 0.1f, posz); //the position we are going to be looking at
+            bool clearedForLanding = true;
+            for (int i = 0; i < numMons; i++) //iterate over the monsters, monsters may not be in the order
             {
-                iterateAngle = iterateAngle * i;
-                if (iterateAngle - (360.0f / roomSpotComp.Value) * (math.PI/180) < 0.01)
-                {
-                    //we have circled! return null
-                    return null;
-                }
                 
+                var dv = entityManager.GetComponentData<Translation>(monsterBuff[i].Value).Value - finalPos;
+
+                //if monsterBuff[i]
+
+                Vector3 vectordv = (Vector3) dv;
+                var b = vectordv.magnitude < 0.15f;
+                if (vectordv.magnitude < 0.15f)
+                {
+                    clearedForLanding = false;
+                    
+                    if (iterateAngle - (360.0f / roomSpotComp.Value) * (math.PI / 180) < 0.01 && i > 0)
+                    {
+                        //we have circled! return null
+                        return null;
+                    }
+
+                }
             }
-            
+
+            if (clearedForLanding)
+            {
+                break; //we are go for spawning!
+            }
+            iterateAngle += intervalAngle; //move to the next spot in the circle
+            clearedForLanding = true; //reset, so we can check the next spot!
         }
+        
+        //finalPos = roomPos + new float3(posx, 0.0f, posz); //dispite its name, we want to take its initial value.
+
         posx = (float) Math.Cos(iterateAngle);
         posz = (float) Math.Sin(iterateAngle);
-        finalPos = roomPos + new float3(posx, 0.0f, posz);
+        finalPos = roomPos + new float3(posx, 0.1f, posz);
 
         return finalPos;
 
