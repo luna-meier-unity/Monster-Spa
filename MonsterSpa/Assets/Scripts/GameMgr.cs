@@ -105,25 +105,35 @@ public class GameMgr : MonoBehaviour
         var dt = Time.deltaTime;
         if (countdown < 0.01)
         {
-        
-            
-        
+
+
+
             //spawn a new monster
-            var monsterEnt = entityManager.Instantiate(monsterEnts[(int)MonsterType.Chick]);
+            var monsterEnt = entityManager.Instantiate(monsterEnts[(int) MonsterType.Chick]);
             monsters.Add(monsterEnt);
 
-            float3 spawnPos = FindSpawnInCircle(rooms[(int) RoomType.Lobby]);
-            entityManager.SetComponentData(monsterEnt, new Translation(){Value=spawnPos});
 
-            var roomEntity = rooms[(int) RoomType.Lobby];
-            entityManager.SetComponentData(monsterEnt, new InsideRoom(){RoomEntity = roomEntity });
 
-            var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
-            //so we need to make a monster type
-            var mon = new Monster();
-            mon.Value = monsterEnt;
-            monsterBuffer.Add(mon);
-            countdown = spawnrate;
+
+
+            float3? spawnPos = FindSpawnInCircle(rooms[(int) RoomType.Lobby]);
+            if (spawnPos.HasValue)
+            {
+                entityManager.SetComponentData(monsterEnt, new Translation() {Value = spawnPos.Value});
+            
+
+
+                var roomEntity = rooms[(int) RoomType.Lobby];
+                entityManager.SetComponentData(monsterEnt, new InsideRoom() {RoomEntity = roomEntity});
+
+                var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
+                //so we need to make a monster type
+                var mon = new Monster();
+                mon.Value = monsterEnt;
+                monsterBuffer.Add(mon);
+            }
+
+        countdown = spawnrate;
         }
         else
         {
@@ -152,22 +162,52 @@ public class GameMgr : MonoBehaviour
         destroyArray.Dispose();
     }
 
-    public static float3 FindSpawnInCircle(Entity room)
+    public static float3? FindSpawnInCircle(Entity room)
     {
         EntityManager entityManager = World.Active.EntityManager;
         var roomSpotComp = entityManager.GetComponentData<RoomSpots>(room);
         var roomPos = entityManager.GetComponentData<Translation>(room).Value;
         
+        
+        //we should check if there is a monster in the spot we are trying to spawn at!
+        foreach (var existingMonster in monsters)
+        {
+            var existingPos = entityManager.GetComponentData<Translation>(existingMonster);
+            //if existingPos.Value - //consider how to do this with FindSpawnInCircle
+        }
         //lets place monsters around the circle!
-        var numMons = entityManager.GetBuffer<Monster>(room).Length;
-        
-        
-        //there will only be a few spots that is available for monsters to be in the spa. lets make it equidistant from the root.
-        float intervalInRads = (350.0f / roomSpotComp.Value) * (math.PI/180) * numMons;
-        float posx = (float) Math.Cos(intervalInRads);
-        float posz = (float) Math.Sin(intervalInRads);
 
-        return roomPos + new float3(posx, 0.0f, posz);
+        var monsterBuff = entityManager.GetBuffer<Monster>(room);
+        var numMons = monsterBuff.Length;
+        var iterateAngle = (360.0f / roomSpotComp.Value) * (math.PI/180);
+        var finalPos = new float3(0,0,0);
+        float posx = (float) Math.Cos(iterateAngle);
+        float posz = (float) Math.Sin(iterateAngle);
+
+        finalPos = roomPos + new float3(posx, 0.0f, posz); //dispite its name, we want to take its initial value.
+        for (int i = 0; i < numMons; i++)
+        {
+            var dv = entityManager.GetComponentData<Translation>(monsterBuff[i].Value).Value - finalPos;
+            //if monsterBuff[i]
+            
+            Vector3 vectordv = (Vector3) dv;
+            if ( vectordv.magnitude < 0.5f)
+            {
+                iterateAngle = iterateAngle * i;
+                if (iterateAngle - (360.0f / roomSpotComp.Value) * (math.PI/180) < 0.01)
+                {
+                    //we have circled! return null
+                    return null;
+                }
+                
+            }
+            
+        }
+        posx = (float) Math.Cos(iterateAngle);
+        posz = (float) Math.Sin(iterateAngle);
+        finalPos = roomPos + new float3(posx, 0.0f, posz);
+
+        return finalPos;
 
     }
 }
