@@ -159,6 +159,8 @@ public class DialogueManager : MonoBehaviour
     {
         if (state == DialogueState.Hidden && currentSection != -1)
         {
+            VictoryConditionManager.g.PauseChecking = true;
+            
             state = DialogueState.Advancing;
             Transitions.Clear();
             
