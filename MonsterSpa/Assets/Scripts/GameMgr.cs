@@ -49,6 +49,7 @@ public class GameMgr : MonoBehaviour
 
     public float spawnrate; //in seconds
     private float countdown;
+    private EntityQuery monstersToDestroyQuery;
 
     // Start is called before the first frame update
     void Start()
@@ -58,8 +59,11 @@ public class GameMgr : MonoBehaviour
             throw new Exception("Multiple GameMgr gameobject components in scene, please only have one constant gameobject in the scene.");
 
         g = this;
+        
         countdown = spawnrate;
         EntityManager entityManager = World.Active.EntityManager;
+        
+        monstersToDestroyQuery = entityManager.CreateEntityQuery(typeof(Tag_RemoveMonster));
         
         var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
@@ -97,11 +101,12 @@ public class GameMgr : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        EntityManager entityManager = World.Active.EntityManager;
         var dt = Time.deltaTime;
         if (countdown < 0.01)
         {
         
-            EntityManager entityManager = World.Active.EntityManager;
+            
         
             //spawn a new monster
             var monsterEnt = entityManager.Instantiate(monsterEnts[(int)MonsterType.Chick]);
@@ -124,6 +129,27 @@ public class GameMgr : MonoBehaviour
         {
             countdown -= dt;
         }
+        
+        
+        
+        //lets destroy monsters!
+        var destroyArray = monstersToDestroyQuery.ToEntityArray(Allocator.TempJob);
+
+        foreach (var dyingMon in destroyArray)
+        {
+            monsters.Remove(dyingMon);
+            var room = entityManager.GetComponentData<InsideRoom>(dyingMon).RoomEntity;
+            var monsterBuffer = entityManager.GetBuffer<Monster>(room);
+            for (int i = monsterBuffer.Length; i < 0 ; i--)
+            {
+                if (monsterBuffer[i].Value == dyingMon)
+                {
+                    monsterBuffer.RemoveAt(i);
+                }
+            }
+        }
+        entityManager.DestroyEntity(destroyArray);
+        destroyArray.Dispose();
     }
 
     public static float3 FindSpawnInCircle(Entity room)

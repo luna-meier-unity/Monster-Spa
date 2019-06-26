@@ -19,9 +19,12 @@ public class MoveToExit : JobComponentSystem
 
         public float monsterspeed;
         public EntityCommandBuffer.Concurrent ecb;
+
+        //public ComponentDataFromEntity<InsideRoom> insideRoom;
         //index is the index of this system that is executing, entity is the entity that is being executed on.
         public void Execute(Entity entity, int index, ref Translation translation, ref Rotation rotation, [ReadOnly] ref TimeToLeave timeToLeave)
         {
+            
             if (timeToLeave.TimeRemaining < 0.01)
             {
                 var directionToExit = normalize(StaticExit.exitPos - translation.Value);
@@ -31,9 +34,10 @@ public class MoveToExit : JobComponentSystem
                 var deltaV = StaticExit.exitPos - translation.Value;
                 if (math.length(deltaV) < 0.1f)
                 {
-                    GameMgr.monsters.Remove(entity);
-                    //GameMgr
-                    ecb.DestroyEntity(index,entity);
+                    ecb.AddComponent(index,entity,new Tag_RemoveMonster());
+                    //GameMgr.monsters.Remove(entity);
+                    
+                    //ecb.DestroyEntity(index,entity);
                 }
 
             }
