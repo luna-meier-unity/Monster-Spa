@@ -9,6 +9,7 @@ public enum SoundEffectType
     Bell,
     Buluboop,
     Chirp,
+    Cockneye,
     LowVoice,
     Success,
     Tea,

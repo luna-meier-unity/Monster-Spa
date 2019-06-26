@@ -14,6 +14,12 @@ public class SoundEffect : MonoBehaviour
         audioSrc = GetComponent<AudioSource>();
     }
 
+    private void Update()
+    {
+        //if(Input.GetKeyDown(KeyCode.K))
+         //   Play();
+    }
+
     public void Play()
     {
         audioSrc.pitch = Random.Range(pitchMin, pitchMax);
