@@ -13,7 +13,7 @@ public struct Dialogue
 
 public struct Transition
 {
-    private float originalAlpha;
+    public float originalAlpha;
     public Image image;
     public TextMeshProUGUI text;
     public bool isImage;
@@ -27,9 +27,15 @@ public struct Transition
         {
             isImage = false;
             text = go.GetComponent<TextMeshProUGUI>();
-        }
+            if (text == null)
+            {
+                originalAlpha = Single.NaN;
+                return;
+            }
+        } 
         
         originalAlpha = isImage ? image.color.a : text.color.a;
+        
     }
 
     public void SetAlpha(float percent)
@@ -165,9 +171,11 @@ public class DialogueManager : MonoBehaviour
                 
                 var trans = new Transition(go);
                 
-                trans.SetAlpha(0);
-                    
-                Transitions.Add(trans);
+                if (!Single.IsNaN(trans.originalAlpha))
+                {
+                    trans.SetAlpha(0);
+                    Transitions.Add(trans);
+                }
             }
 
             currentLine++;
@@ -216,9 +224,11 @@ public class DialogueManager : MonoBehaviour
 
                         var trans = new Transition(go);
 
-                        trans.SetAlpha(0);
-
-                        Transitions.Add(trans);
+                        if (!Single.IsNaN(trans.originalAlpha))
+                        {
+                            trans.SetAlpha(0);
+                            Transitions.Add(trans);
+                        }
                     }
 
                     PercentThroughTransition = 0;
