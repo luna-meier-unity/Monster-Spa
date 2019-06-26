@@ -132,7 +132,7 @@ public class GameMgr : MonoBehaviour
         
         
         
-        //lets destroy monsters!
+        //lets destroy monsters! this happens outside of jobs to make sure we dont need to schedule weird things.
         var destroyArray = monstersToDestroyQuery.ToEntityArray(Allocator.TempJob);
 
         foreach (var dyingMon in destroyArray)
