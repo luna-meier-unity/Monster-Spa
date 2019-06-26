@@ -253,19 +253,6 @@ namespace Unity.Physics.Extensions
             {
                 All = new ComponentType[] { typeof(MousePick) }
             });
-
-            Debug.Log("Found hello");
-
-            foreach (var body in m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld.Bodies.ToArray())
-            {
-                Debug.Log("Found body");
-                if (body.Entity == ConvertTerrain.TerrainEntity)
-                {
-                    Debug.Log("Found terrain");
-                    m_TerrainBody = body;
-                    break;
-                }
-            }
         }
 
         private RigidBody TerrainBody
@@ -276,10 +263,8 @@ namespace Unity.Physics.Extensions
                 {
                     foreach (var body in m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld.Bodies.ToArray())
                     {
-                        Debug.Log("Found body");
                         if (body.Entity == ConvertTerrain.TerrainEntity)
                         {
-                            Debug.Log("Found terrain");
                             m_TerrainBody = body;
                             break;
                         }
