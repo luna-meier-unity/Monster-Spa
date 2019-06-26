@@ -7,11 +7,30 @@ using System;
 using Unity.Transforms;
 using UnityEngine.UIElements;
 
+public enum MonsterType
+{
+    Chick = 0,
+    Ghost = 1,
+    Sandal = 2,
+    Hundun = 3
+}
+
+public enum RoomType
+{
+    Lobby = 0,
+    Sauna = 1,
+    HotTub = 2,
+    ColdBath = 3,
+    Cafe = 4
+}
+
 public class GameMgr : MonoBehaviour
 {
     public static GameMgr g;
     public List<Entity> rooms = new List<Entity>();
     public static List<Entity> monsters = new List<Entity>();
+    
+    //Prefabs
     public GameObject lobby;
     public GameObject sauna;
     public GameObject hotTub;
@@ -54,7 +73,7 @@ public class GameMgr : MonoBehaviour
         
         
         //monsters should just come inside over time
-        var monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
+        var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
         monsterEnts.Add(monEnt);
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Ghost, World.Active);
         monsterEnts.Add(monEnt);
@@ -67,8 +86,7 @@ public class GameMgr : MonoBehaviour
         monsters.Add(entityManager.Instantiate(monsterEnts[0]));
         
         
-        entityManager.SetComponentData(monsters[0], new InsideRoom(){RoomEntity = rooms[0]}); //room 0 is lobby!
-        //entityManager.SetComponentData();
+        entityManager.SetComponentData(monsters[(int)MonsterType.Chick], new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
 
     }
 
@@ -79,13 +97,11 @@ public class GameMgr : MonoBehaviour
         {
             EntityManager entityManager = World.Active.EntityManager;
         
-            //spawn a new monster!
-            var monsterEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
-            var thing = entityManager.Instantiate((monsterEnt));
-            entityManager.SetComponentData(thing, new Translation(){Value=sauna.transform.position});
-            monsters.Add(entityManager.Instantiate(monsterEnt));
-            
-            entityManager.SetComponentData(monsterEnt, new InsideRoom(){RoomEntity = rooms[0]}); //room 0 is lobby!
+            //spawn a new monster
+            var monsterEnt = entityManager.Instantiate(monsterEnts[(int)MonsterType.Chick]);
+            monsters.Add(monsterEnt);
+            entityManager.SetComponentData(monsterEnt, new Translation(){Value=sauna.transform.position});
+            entityManager.SetComponentData(monsterEnt, new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
         }
     }
 }
