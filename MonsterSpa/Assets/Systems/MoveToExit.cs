@@ -32,6 +32,7 @@ public class MoveToExit : JobComponentSystem
                 if (math.length(deltaV) < 0.1f)
                 {
                     GameMgr.monsters.Remove(entity);
+                    //GameMgr
                     ecb.DestroyEntity(index,entity);
                 }
 

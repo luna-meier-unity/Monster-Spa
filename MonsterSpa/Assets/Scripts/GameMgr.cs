@@ -4,6 +4,9 @@ using Unity.Collections;
 using Unity.Entities;
 using UnityEngine;
 using System;
+using System.Threading;
+using System.Xml;
+using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine.UIElements;
 
@@ -27,7 +30,7 @@ public enum RoomType
 public class GameMgr : MonoBehaviour
 {
     public static GameMgr g;
-    public List<Entity> rooms = new List<Entity>();
+    public static List<Entity> rooms = new List<Entity>();
     public static List<Entity> monsters = new List<Entity>();
     
     //Prefabs
@@ -40,21 +43,22 @@ public class GameMgr : MonoBehaviour
     public GameObject Ghost;
     public GameObject Sandal;
     public GameObject Hundun;
+    //public float spawnInterval;
 
     public static List<Entity> monsterEnts = new List<Entity>();
 
-    public int spawnrate; //in seconds
+    public float spawnrate; //in seconds
+    private float countdown;
 
-    private float starttime;
     // Start is called before the first frame update
     void Start()
     {
-        starttime = Time.time;
+        //starttime = Time.time;
         if(g != null)
             throw new Exception("Multiple GameMgr gameobject components in scene, please only have one constant gameobject in the scene.");
 
         g = this;
-        
+        countdown = spawnrate;
         EntityManager entityManager = World.Active.EntityManager;
         
         var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
@@ -83,25 +87,61 @@ public class GameMgr : MonoBehaviour
         monsterEnts.Add(monEnt);
         
         
-        monsters.Add(entityManager.Instantiate(monsterEnts[0]));
+        //monsters.Add(entityManager.Instantiate(monsterEnts[0]));
         
         
-        entityManager.SetComponentData(monsters[(int)MonsterType.Chick], new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
+        //entityManager.SetComponentData(monsters[(int)MonsterType.Chick], new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
 
     }
 
     // Update is called once per frame
     void Update()
     {
-        if (Time.time % spawnrate < 0.1)
+        var dt = Time.deltaTime;
+        if (countdown < 0.01)
         {
+        
             EntityManager entityManager = World.Active.EntityManager;
         
             //spawn a new monster
             var monsterEnt = entityManager.Instantiate(monsterEnts[(int)MonsterType.Chick]);
             monsters.Add(monsterEnt);
-            entityManager.SetComponentData(monsterEnt, new Translation(){Value=sauna.transform.position});
-            entityManager.SetComponentData(monsterEnt, new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
+
+            float3 spawnPos = FindSpawnInCircle(rooms[(int) RoomType.Lobby]);
+            entityManager.SetComponentData(monsterEnt, new Translation(){Value=spawnPos});
+
+            var roomEntity = rooms[(int) RoomType.Lobby];
+            entityManager.SetComponentData(monsterEnt, new InsideRoom(){RoomEntity = roomEntity });
+
+            var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
+            //so we need to make a monster type
+            var mon = new Monster();
+            mon.Value = monsterEnt;
+            monsterBuffer.Add(mon);
+            countdown = spawnrate;
         }
+        else
+        {
+            countdown -= dt;
+        }
+    }
+
+    public static float3 FindSpawnInCircle(Entity room)
+    {
+        EntityManager entityManager = World.Active.EntityManager;
+        var roomSpotComp = entityManager.GetComponentData<RoomSpots>(room);
+        var roomPos = entityManager.GetComponentData<Translation>(room).Value;
+        
+        //lets place monsters around the circle!
+        var numMons = entityManager.GetBuffer<Monster>(room).Length;
+        
+        
+        //there will only be a few spots that is available for monsters to be in the spa. lets make it equidistant from the root.
+        float intervalInRads = (350.0f / roomSpotComp.Value) * (math.PI/180) * numMons;
+        float posx = (float) Math.Cos(intervalInRads);
+        float posz = (float) Math.Sin(intervalInRads);
+
+        return roomPos + new float3(posx, 0.0f, posz);
+
     }
 }

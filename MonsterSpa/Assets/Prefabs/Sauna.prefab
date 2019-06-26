@@ -4918,6 +4918,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   temprature: 212
+  Spots: 5
 --- !u!1001 &2440187672125812642
 PrefabInstance:
   m_ObjectHideFlags: 0
