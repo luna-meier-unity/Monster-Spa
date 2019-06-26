@@ -16,8 +16,8 @@ public class SoundEffect : MonoBehaviour
 
     private void Update()
     {
-        //if(Input.GetKeyDown(KeyCode.K))
-         //   Play();
+        if(Input.GetKeyDown(KeyCode.K))
+            Play();
     }
 
     public void Play()
