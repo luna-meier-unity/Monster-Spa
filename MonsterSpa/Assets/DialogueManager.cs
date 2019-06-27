@@ -125,6 +125,7 @@ public class DialogueManager : MonoBehaviour
     }
 
     public int currentSection = -1;
+    public bool playSuccessSound = false;
     public int currentLine = 0;
     private enum DialogueState
     {
@@ -211,6 +212,11 @@ public class DialogueManager : MonoBehaviour
                     ((Dialogue)Sections[currentSection]).MainElement.SetActive(false);
                     currentSection = -1;
                     VictoryConditionManager.g.PauseChecking = false;
+
+                    if (playSuccessSound)
+                    {
+                        SoundEffectManager.g.PlaySoundEffect(SoundEffectType.Success);
+                    }
                 }
             }
             else
