@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using TMPro;
+using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -57,21 +58,27 @@ public struct Transition
 
 public class DialogueManager : MonoBehaviour
 {
-    public List<Dialogue> Sections;
+    private Hashtable Sections;
 
     public float TimeToFade;
 
     public float PercentThroughTransition;
 
     public List<Transition> Transitions;
-    
+
+    public static DialogueManager g;
     
     // Start is called before the first frame update
     void Start()
     {
-        Transitions = new List<Transition>();
+        if(g != null)
+            throw new Exception("Multiple dialogue managers in scene, please fix so theres only one");
+
+        g = this;
         
-        Sections = new List<Dialogue>();
+        Transitions = new List<Transition>();
+
+        Sections = new Hashtable();
         
         var children = this.GetComponentsInChildren<Transform>();
         for(var go = 0; go < this.transform.childCount; ++go)
@@ -110,12 +117,14 @@ public class DialogueManager : MonoBehaviour
 
             dialogue.LineGroups = LineGroups;
             
-            Sections.Add(dialogue);
+            Sections.Add(int.Parse(dialogue.MainElement.name.Substring(0,1)),dialogue);
+
+            currentSection = -1;
         }
         
     }
 
-    public int currentSection = 0;
+    public int currentSection = -1;
     public int currentLine = 0;
     private enum DialogueState
     {
@@ -148,16 +157,18 @@ public class DialogueManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        if (state == DialogueState.Hidden && currentSection < Sections.Count && Input.GetKeyDown(KeyCode.D))
+        if (state == DialogueState.Hidden && currentSection != -1)
         {
+            VictoryConditionManager.g.PauseChecking = true;
+            
             state = DialogueState.Advancing;
             Transitions.Clear();
             
             PercentThroughTransition = 0.0f;
             
-            Sections[currentSection].MainElement.SetActive(true);
+            ((Dialogue)Sections[currentSection]).MainElement.SetActive(true);
             {
-                var trans = new Transition(Sections[currentSection].MainElement);
+                var trans = new Transition(((Dialogue)Sections[currentSection]).MainElement);
                 
                 trans.SetAlpha(0);
                     
@@ -165,7 +176,7 @@ public class DialogueManager : MonoBehaviour
             }
             
             currentLine = 0;
-            foreach (var go in Sections[currentSection].LineGroups[currentLine])
+            foreach (var go in ((Dialogue)Sections[currentSection]).LineGroups[currentLine])
             {
                 go.SetActive(true);
                 
@@ -183,7 +194,7 @@ public class DialogueManager : MonoBehaviour
 
         if (state == DialogueState.Advancing && (Input.GetMouseButtonDown(0) || Input.GetKeyDown(KeyCode.Space)))
         {
-            if (currentLine == Sections[currentSection].LineGroups.Length)
+            if (currentLine == ((Dialogue)Sections[currentSection]).LineGroups.Length)
             {
                 if (PercentThroughTransition < TimeToFade)
                 {
@@ -197,8 +208,9 @@ public class DialogueManager : MonoBehaviour
                 {
                     state = DialogueState.Hidden;
                     currentLine = 0;
-                    Sections[currentSection].MainElement.SetActive(false);
-                    currentSection++;
+                    ((Dialogue)Sections[currentSection]).MainElement.SetActive(false);
+                    currentSection = -1;
+                    VictoryConditionManager.g.PauseChecking = false;
                 }
             }
             else
@@ -214,11 +226,9 @@ public class DialogueManager : MonoBehaviour
                 else
                 {
 
-
-
                     Transitions.Clear();
 
-                    foreach (var go in Sections[currentSection].LineGroups[currentLine])
+                    foreach (var go in ((Dialogue)Sections[currentSection]).LineGroups[currentLine])
                     {
                         go.SetActive(true);
 
