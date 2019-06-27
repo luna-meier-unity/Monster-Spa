@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 27170630}
-  m_IndirectSpecularColor: {r: 0.00076562614, g: 0.060729995, b: 0.16576383, a: 1}
+  m_IndirectSpecularColor: {r: 0.00071085314, g: 0.06072414, b: 0.16579062, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -9170,7 +9170,7 @@ MonoBehaviour:
   hotTub: {fileID: 162818934049672952, guid: c31ed19b014e640c9b8ad0ed2bb3b798, type: 3}
   coldBath: {fileID: 2148557846153670123, guid: 6707a3ee0b00b4996b065378d128cb84,
     type: 3}
-  cafe: {fileID: 3535975056149430581, guid: 41203a434b2fc4b43aa109fcd5ebb88c, type: 3}
+  cafe: {fileID: 8161142126431491256, guid: 74d0f0404db754823879619c7a5d5c66, type: 3}
   Chick: {fileID: 4779150490070706111, guid: 7ccc500d0fde0476a81cd924b5261aa4, type: 3}
   Ghost: {fileID: 4779150490070706111, guid: c8de20e8e46664005a9afece9d01d018, type: 3}
   Sandal: {fileID: 4779150490070706111, guid: c74faf720b99249d0b8e3a02e3692993, type: 3}
