@@ -20,7 +20,9 @@ public class GameMgr : MonoBehaviour
     public static GameMgr g;
     public static List<Entity> rooms = new List<Entity>();
     public static List<Entity> monsters = new List<Entity>();
-    
+    public List<GameObject> spawnables = new List<GameObject>();
+    private System.Random randomizer = new System.Random();
+
     //Prefabs
     public GameObject lobby;
     public GameObject sauna;
@@ -33,7 +35,7 @@ public class GameMgr : MonoBehaviour
     public GameObject Hundun;
     //public float spawnInterval;
 
-    public static List<Entity> monsterEnts = new List<Entity>();
+    //public static List<Entity> monsterEnts = new List<Entity>();
 
     public float spawnrate; //in seconds
     private float countdown;
@@ -69,20 +71,29 @@ public class GameMgr : MonoBehaviour
         
         //monsters should just come inside over time
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
-        monsterEnts.Add(monEnt);
+        gameObjectToMonsterEntityMap[Chick] = monEnt;
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Ghost, World.Active);
-        monsterEnts.Add(monEnt);
+        gameObjectToMonsterEntityMap[Ghost] = monEnt;
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Sandal, World.Active);
-        monsterEnts.Add(monEnt);
+        gameObjectToMonsterEntityMap[Sandal] = monEnt;
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Hundun, World.Active);
-        monsterEnts.Add(monEnt);
-        
-        
-        //monsters.Add(entityManager.Instantiate(monsterEnts[0]));
-        
-        
-        //entityManager.SetComponentData(monsters[(int)MonsterType.Chick], new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
+        gameObjectToMonsterEntityMap[Hundun] = monEnt;
 
+        spawnables = new List<GameObject>() { Chick };
+    }
+
+    Dictionary<GameObject, Entity> gameObjectToMonsterEntityMap = new Dictionary<GameObject, Entity>();
+
+    private Entity? InstantiateRandomMonster()
+    {
+        if (spawnables.Count == 0)
+        {
+            return null;
+        }
+
+        var index = randomizer.Next(spawnables.Count);        
+        var gameObjectToSpawn = spawnables[index];        
+        return World.Active.EntityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn]);
     }
 
     public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos, float timeToLeave)
@@ -159,9 +170,13 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
-            var monsterType = UnityEngine.Random.Range(0, monsterEnts.Count);
-            var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
-            MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value, 5);
+            var monster = InstantiateRandomMonster();
+            if (!monster.HasValue)
+            {
+                return;
+            }
+
+            MoveMonsterToRoom(monster.Value, roomEntity, spawnPoint.Value, 5);
             countdown = spawnrate;
         }
         else
