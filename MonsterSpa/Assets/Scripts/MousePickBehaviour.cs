@@ -323,9 +323,15 @@ namespace Unity.Physics.Extensions
             // If there's a picked entity, drag it
             MousePickSystem.SpringData springData = m_PickSystem.SpringDatas[0];
             if (springData.Dragging != 0)
-            {                
-                m_WasDragging = true;
+            {
                 Entity entity = m_PickSystem.SpringDatas[0].Entity;
+
+                if (!m_WasDragging)
+                {
+                    GameMgr.g.PlayPickMonsterSoundEffect(entity);
+                }
+
+                m_WasDragging = true;                
                 Translation posComponent = Positions[entity];
                 m_SelectedEntity = entity;
 
@@ -334,13 +340,12 @@ namespace Unity.Physics.Extensions
                 {
                     posComponent.Value.x = hit.Position.x;
                     posComponent.Value.z = hit.Position.z;
-                    Positions[entity] = posComponent;
+                    Positions[entity] = posComponent;                    
                 }                
             }
             else if (m_WasDragging)
             {
-                // TODO: Check if the entity collides with any of the rooms
-                var monster = m_PickSystem.SpringDatas[0].Entity;
+                // TODO: Check if the entity collides with any of the roomss
                 m_WasDragging = false;
                 Entity? selectedRoom = null;
                 var raycastInput = MousePickBehaviour.CreateRayCastFromMouse();
@@ -350,7 +355,6 @@ namespace Unity.Physics.Extensions
                     RaycastHit hit;
                     if (true) //room.CastRay(raycastInput, out hit))
                     {
-                        Debug.Log("Found room");
                         var spawnPoint = GameMgr.FindSpawnInCircle(room.Entity);
                         if (spawnPoint != null)
                         {
