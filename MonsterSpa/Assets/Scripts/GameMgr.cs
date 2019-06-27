@@ -60,7 +60,6 @@ public class GameMgr : MonoBehaviour
 
         g = this;
         
-        countdown = spawnrate;
         EntityManager entityManager = World.Active.EntityManager;
         
         monstersToDestroyQuery = entityManager.CreateEntityQuery(typeof(Tag_RemoveMonster));
@@ -161,7 +160,7 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
-            var monsterType = UnityEngine.Random.Range(0, typeof(MonsterType).GetEnumValues().Length);
+            var monsterType = UnityEngine.Random.Range(0, typeof(MonsterType).GetEnumValues().Length - 1);
             var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
             MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value);
             countdown = spawnrate;
