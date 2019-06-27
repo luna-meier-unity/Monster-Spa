@@ -89,6 +89,7 @@ public class VictoryConditionManager : MonoBehaviour
             new RoomState(0,0,0,0),
             new RoomState(4,0,0,0)));
         
+        /*
         //10////////////////////////////////////////////////////////////////////
         UnmetConditions.Add(new VictoryCondition(10,
             new RoomState(2,0,0,0),
@@ -134,7 +135,7 @@ public class VictoryConditionManager : MonoBehaviour
         UnmetConditions.Add(new VictoryCondition(18,
             new RoomState(0,0,0,0),
             new RoomState(0,0,1,1),
-            new RoomState(0,0,0,0)));
+            new RoomState(0,0,0,0)));*/
 
         CurrentCheckIndex = 0;
 
@@ -195,6 +196,7 @@ public class VictoryConditionManager : MonoBehaviour
                         new RoomState(0,0,0,0)));
 
                     playSuccessSound = true;
+                    GameMgr.g.SpawnRoom(GameMgr.g.coldBath);
                     break;
                 case 3: //Unlock Hundun
                     
@@ -223,6 +225,7 @@ public class VictoryConditionManager : MonoBehaviour
                     
                     playSuccessSound = true;
                     
+                    GameMgr.g.SpawnRoom(GameMgr.g.hotTub);
                     
                     break;
                 
@@ -258,6 +261,7 @@ public class VictoryConditionManager : MonoBehaviour
                     break;
                 
                 case 9: //Victory!
+                    
                     
                     playSuccessSound = true;
                     break;
