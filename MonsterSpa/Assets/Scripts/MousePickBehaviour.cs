@@ -8,6 +8,7 @@ using Unity.Transforms;
 using UnityEngine;
 using UnityEngine.Assertions;
 using static Unity.Physics.Math;
+using Unity.Physics.Extensions;
 
 namespace Unity.Physics.Extensions
 {
@@ -84,7 +85,7 @@ namespace Unity.Physics.Extensions
         }
         #endregion
     }
-
+    
     public struct MousePick : IComponentData
     {
         public int IgnoreTriggers;
@@ -106,7 +107,7 @@ namespace Unity.Physics.Extensions
         public static RaycastInput CreateRayCastFromMouse()
         {
             var unityRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            Debug.DrawRay(unityRay.origin, unityRay.direction, Color.red, 3);
+            // Debug.DrawRay(unityRay.origin, unityRay.direction, Color.red, 3);
             return new RaycastInput
             {
                 Start = unityRay.origin,
@@ -125,7 +126,6 @@ namespace Unity.Physics.Extensions
 
         public NativeArray<SpringData> SpringDatas;
         public JobHandle? PickJobHandle;
-        public PhysicsWorld PhysicsWorld;
 
         public struct SpringData
         {
@@ -264,6 +264,7 @@ namespace Unity.Physics.Extensions
             {
                 if (m_TerrainBody == null)
                 {
+                    var index = 0;
                     foreach (var body in m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld.Bodies.ToArray())
                     {
                         if (body.Entity == ConvertTerrain.TerrainEntity)
@@ -271,6 +272,7 @@ namespace Unity.Physics.Extensions
                             m_TerrainBody = body;
                             break;
                         }
+                        index++;
                     }
                 }
 
@@ -301,6 +303,20 @@ namespace Unity.Physics.Extensions
             }
         }
 
+        private RaycastHit? FindRayCastHit(Entity targetEntity, NativeSlice<RigidBody> bodies, NativeList<RaycastHit> hits)
+        {
+            foreach (var currentHit in hits.ToArray())
+            {
+                var hitEntity = bodies[currentHit.RigidBodyIndex + 1].Entity;
+                if (hitEntity == targetEntity)
+                {
+                    return currentHit;
+                }
+            }
+
+            return null;
+        }
+
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             if (m_MouseGroup.CalculateLength() == 0)
@@ -323,45 +339,71 @@ namespace Unity.Physics.Extensions
             // If there's a picked entity, drag it
             MousePickSystem.SpringData springData = m_PickSystem.SpringDatas[0];
             if (springData.Dragging != 0)
-            {                
-                m_WasDragging = true;
+            {
                 Entity entity = m_PickSystem.SpringDatas[0].Entity;
+
+                if (!m_WasDragging)
+                {
+                    GameMgr.g.PlayPickMonsterSoundEffect(entity);
+                }
+
+                m_WasDragging = true;                
                 Translation posComponent = Positions[entity];
                 m_SelectedEntity = entity;
 
-                RaycastHit hit;
-                if (TerrainBody.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), out hit))
+                // var world = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld;                
+                var physicsWorld = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld;                
+                var hits = new NativeList<RaycastHit>(Allocator.TempJob);
+                physicsWorld.CollisionWorld.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), ref hits);
+
+                var index = physicsWorld.GetRigidBodyIndex(TerrainBody.Entity);
+                // Debug.Log("This is the index" + index);
+                // Unity.Physics.Extensions.PhysicsWorldExtensions.GetRigidBodyIndex(physicsWorld, )
+                foreach (var hit in hits.ToArray())
                 {
-                    posComponent.Value.x = hit.Position.x;
-                    posComponent.Value.z = hit.Position.z;
+                    //Debug.Log("Hit index " + hit.RigidBodyIndex);
+                    if (hit.RigidBodyIndex + 1 == index)
+                    {                        
+                        posComponent.Value.x = hit.Position.x;
+                        posComponent.Value.z = hit.Position.z;
+                        Positions[entity] = posComponent;
+                        break;
+                    }
+                }
+
+                /*
+                var hit = FindRayCastHit(TerrainBody.Entity, physicsWorld.Bodies, hits);
+                if (hit.HasValue)
+                {
+                    posComponent.Value.x = hit.Value.Position.x;
+                    posComponent.Value.z = hit.Value.Position.z;
                     Positions[entity] = posComponent;
-                }                
+                }*/
+            
+                hits.Dispose();
             }
             else if (m_WasDragging)
             {
-                // TODO: Check if the entity collides with any of the rooms
-                var monster = m_PickSystem.SpringDatas[0].Entity;
+                // TODO: Check if the entity collides with any of the roomss
                 m_WasDragging = false;
-                Entity? selectedRoom = null;
-                var raycastInput = MousePickBehaviour.CreateRayCastFromMouse();
-                               
+                var physicsWorld = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld;
+                var hits = new NativeList<RaycastHit>(Allocator.TempJob);
+                physicsWorld.CollisionWorld.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), ref hits);
+                
                 foreach (var room in RoomBodies)
-                {                    
-                    RaycastHit hit;
-                    if (true) //room.CastRay(raycastInput, out hit))
+                {
+                    var hit = FindRayCastHit(room.Entity, physicsWorld.Bodies, hits);
+                    if (hit.HasValue)
                     {
-                        Debug.Log("Found room");
                         var spawnPoint = GameMgr.FindSpawnInCircle(room.Entity);
                         if (spawnPoint != null)
                         {
-                            Entity entity = m_SelectedEntity;
-                            Translation posComponent = Positions[entity];
-                            GameMgr.MoveMonsterToRoom(entity, room.Entity, 10);
+                            GameMgr.MoveMonsterToRoom(m_SelectedEntity, room.Entity, 10);
                         }
-                        
-                        break;
                     }
-                }                
+                }
+
+                hits.Dispose();                
             }
 
             return inputDeps;
