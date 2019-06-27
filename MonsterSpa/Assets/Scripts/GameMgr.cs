@@ -20,7 +20,9 @@ public class GameMgr : MonoBehaviour
     public static GameMgr g;
     public static List<Entity> rooms = new List<Entity>();
     public static List<Entity> monsters = new List<Entity>();
-    
+    public List<GameObject> spawnables = new List<GameObject>();
+    private System.Random randomizer = new System.Random();
+
     //Prefabs
     public GameObject lobby;
     public GameObject sauna;
@@ -31,10 +33,7 @@ public class GameMgr : MonoBehaviour
     public GameObject Ghost;
     public GameObject Sandal;
     public GameObject Hundun;
-    //public float spawnInterval;
-
-    public static List<Entity> monsterEnts = new List<Entity>();
-
+    
     public float spawnrate; //in seconds
     private float countdown;
     private EntityQuery monstersToDestroyQuery;
@@ -47,17 +46,17 @@ public class GameMgr : MonoBehaviour
             throw new Exception("Multiple GameMgr gameobject components in scene, please only have one constant gameobject in the scene.");
 
         g = this;
-        
+
         EntityManager entityManager = World.Active.EntityManager;
-        
+
         monstersToDestroyQuery = entityManager.CreateEntityQuery(typeof(Tag_RemoveMonster));
-        
+
         var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(sauna, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
-        
-        
+
+
         //these will be unlocked later, and should be removed from here when the time comes.
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(hotTub, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
@@ -65,24 +64,33 @@ public class GameMgr : MonoBehaviour
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
-        
-        
+
+
         //monsters should just come inside over time
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
-        monsterEnts.Add(monEnt);
+        gameObjectToMonsterEntityMap[Chick] = monEnt;
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Ghost, World.Active);
-        monsterEnts.Add(monEnt);
+        gameObjectToMonsterEntityMap[Ghost] = monEnt;
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Sandal, World.Active);
-        monsterEnts.Add(monEnt);
+        gameObjectToMonsterEntityMap[Sandal] = monEnt;
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Hundun, World.Active);
-        monsterEnts.Add(monEnt);
-        
-        
-        //monsters.Add(entityManager.Instantiate(monsterEnts[0]));
-        
-        
-        //entityManager.SetComponentData(monsters[(int)MonsterType.Chick], new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
+        gameObjectToMonsterEntityMap[Hundun] = monEnt;
 
+        spawnables = new List<GameObject>() { Chick };
+    }
+
+    Dictionary<GameObject, Entity> gameObjectToMonsterEntityMap = new Dictionary<GameObject, Entity>();
+
+    private Entity? InstantiateRandomMonster()
+    {
+        if (spawnables.Count == 0)
+        {
+            return null;
+        }
+
+        var index = randomizer.Next(spawnables.Count);
+        var gameObjectToSpawn = spawnables[index];
+        return World.Active.EntityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn]);
     }
 
     public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos, float timeToLeave)
@@ -123,9 +131,9 @@ public class GameMgr : MonoBehaviour
             monsters.Remove(dyingMon);
             var room = entityManager.GetComponentData<InsideRoom>(dyingMon).RoomEntity;
             var monsterBuffer = entityManager.GetBuffer<Monster>(room);
-            for (int i = monsterBuffer.Length; i < 0; i--)
+            for (int i = monsterBuffer.Length-1; i >= 0; i--)
             {
-                if (monsterBuffer[i].Value == dyingMon)
+                if (monsterBuffer[i].Value.Equals(dyingMon))
                 {
                     monsterBuffer.RemoveAt(i);
                 }
@@ -142,16 +150,16 @@ public class GameMgr : MonoBehaviour
 
     void UpdateRoomStates()
     {
-        //VictoryConditionManager.g.coldBathState 
+        //VictoryConditionManager.g.coldBathState
     }
-    
+
     // Update is called once per frame
     void Update()
-    {        
+    {
         EntityManager entityManager = World.Active.EntityManager;
         var dt = Time.deltaTime;
         if (countdown < 0.01)
-        {            
+        {
             var roomEntity = rooms[(int)RoomType.Lobby];
             var spawnPoint = FindSpawnInCircle(roomEntity);
             if (!spawnPoint.HasValue)
@@ -159,9 +167,13 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
-            var monsterType = UnityEngine.Random.Range(0, monsterEnts.Count);
-            var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
-            MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value, 5);
+            var monster = InstantiateRandomMonster();
+            if (!monster.HasValue)
+            {
+                return;
+            }
+
+            MoveMonsterToRoom(monster.Value, roomEntity, spawnPoint.Value, 5);
             countdown = spawnrate;
         }
         else
@@ -177,8 +189,8 @@ public class GameMgr : MonoBehaviour
         EntityManager entityManager = World.Active.EntityManager;
         var roomSpotComp = entityManager.GetComponentData<RoomSpots>(room);
         var roomPos = entityManager.GetComponentData<Translation>(room).Value;
-        
-        
+
+
         //we should check if there is a monster in the spot we are trying to spawn at!
         foreach (var existingMonster in monsters)
         {
@@ -194,7 +206,7 @@ public class GameMgr : MonoBehaviour
         var finalPos = new float3(0,0,0);
         float posx = 0;
         float posz = 0;
-        
+
 
         for (int j = 0; j < roomSpotComp.Value; j++) //for each of our spots, check if there is an entity in that spot
         {
@@ -204,7 +216,7 @@ public class GameMgr : MonoBehaviour
             bool clearedForLanding = true;
             for (int i = 0; i < numMons; i++) //iterate over the monsters, monsters may not be in the order
             {
-                
+
                 var dv = entityManager.GetComponentData<Translation>(monsterBuff[i].Value).Value - finalPos;
 
                 //if monsterBuff[i]
@@ -214,7 +226,7 @@ public class GameMgr : MonoBehaviour
                 if (vectordv.magnitude < 0.15f)
                 {
                     clearedForLanding = false;
-                    
+
                     if (iterateAngle - (360.0f / roomSpotComp.Value) * (math.PI / 180) < 0.01 && i > 0)
                     {
                         //we have circled! return null
@@ -231,7 +243,7 @@ public class GameMgr : MonoBehaviour
             iterateAngle += intervalAngle; //move to the next spot in the circle
             clearedForLanding = true; //reset, so we can check the next spot!
         }
-        
+
         //finalPos = roomPos + new float3(posx, 0.0f, posz); //dispite its name, we want to take its initial value.
 
         posx = (float) Math.Cos(iterateAngle);
