@@ -51,7 +51,7 @@ public class MoveToExit : JobComponentSystem
                 }
                 //need reference to lobby...
                 //var query = entityManager.CreateEntityQuery(typeof(Tag_Lobby)).ToEntityArray(Allocator.TempJob);
-                //ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = query[0] });
+                ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = lobby });
                 
                 
                 //query.Dispose();
