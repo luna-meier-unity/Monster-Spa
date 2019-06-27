@@ -222,7 +222,7 @@ public class GameMgr : MonoBehaviour
         }
 
 
-
+        //entityManager.SetComponentData(monsterEntity, new Rotation() {Value = quaternion.});
         entityManager.SetComponentData(monsterEntity, new Translation() { Value = spawnPos });
         entityManager.SetComponentData(monsterEntity, new InsideRoom() { RoomEntity = roomEntity });
         entityManager.SetComponentData(monsterEntity, new TimeToLeave() { TimeRemaining = timeToLeave });
