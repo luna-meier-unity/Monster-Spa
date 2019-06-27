@@ -9207,6 +9207,21 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6437091298254798863, guid: 71fb75ca372070e4b8aaa1c82017c92e,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1.77
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437091298254798863, guid: 71fb75ca372070e4b8aaa1c82017c92e,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0.14
+      objectReference: {fileID: 0}
+    - target: {fileID: 6437091298254798863, guid: 71fb75ca372070e4b8aaa1c82017c92e,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: -3.78
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71fb75ca372070e4b8aaa1c82017c92e, type: 3}
 --- !u!1 &2091770497
@@ -9245,7 +9260,7 @@ MonoBehaviour:
   hotTub: {fileID: 162818934049672952, guid: c31ed19b014e640c9b8ad0ed2bb3b798, type: 3}
   coldBath: {fileID: 2148557846153670123, guid: 6707a3ee0b00b4996b065378d128cb84,
     type: 3}
-  cafe: {fileID: 3733809211869392645, guid: 41203a434b2fc4b43aa109fcd5ebb88c, type: 3}
+  cafe: {fileID: 3535975056149430581, guid: 41203a434b2fc4b43aa109fcd5ebb88c, type: 3}
   Chick: {fileID: 4779150490070706111, guid: 7ccc500d0fde0476a81cd924b5261aa4, type: 3}
   Ghost: {fileID: 4779150490070706111, guid: c8de20e8e46664005a9afece9d01d018, type: 3}
   Sandal: {fileID: 4779150490070706111, guid: c74faf720b99249d0b8e3a02e3692993, type: 3}
