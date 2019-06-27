@@ -67,37 +67,35 @@ public class GameMgr : MonoBehaviour
         monstersToDestroyQuery = entityManager.CreateEntityQuery(typeof(Tag_RemoveMonster));
 
         
-        //SpawnRoom(lobby);
-        var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
-        var instantiatedRoom = entityManager.Instantiate(roomEnt);
-        rooms.Add(instantiatedRoom);
-        gameObjectToRoomEntityMap[lobby] = instantiatedRoom;
-
-        roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(sauna, World.Active);
-        instantiatedRoom = entityManager.Instantiate(roomEnt);
-        rooms.Add(entityManager.Instantiate(instantiatedRoom));
-        gameObjectToRoomEntityMap[sauna] = instantiatedRoom;
-
-
-        //these will be unlocked later, and should be removed from here when the time comes.
-        roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(hotTub, World.Active);
-        instantiatedRoom = entityManager.Instantiate(roomEnt);
-        rooms.Add(entityManager.Instantiate(instantiatedRoom));
-        gameObjectToRoomEntityMap[hotTub] = instantiatedRoom;
-        
-        
-        
-        
-        roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(coldBath, World.Active);
-        instantiatedRoom = entityManager.Instantiate(roomEnt);
-        rooms.Add(entityManager.Instantiate(instantiatedRoom));
-        gameObjectToRoomEntityMap[coldBath] = instantiatedRoom;
-
-        //this no longer exists
-        //roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
+        SpawnRoom(lobby);
+        //var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
+        //var instantiatedRoom = entityManager.Instantiate(roomEnt);
+        //rooms.Add(instantiatedRoom);
+        //gameObjectToRoomEntityMap[lobby] = instantiatedRoom;
+//
+        SpawnRoom(sauna);
+        //roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(sauna, World.Active);
         //instantiatedRoom = entityManager.Instantiate(roomEnt);
         //rooms.Add(entityManager.Instantiate(instantiatedRoom));
-        //gameObjectToRoomEntityMap[cafe] = instantiatedRoom;
+        //gameObjectToRoomEntityMap[sauna] = instantiatedRoom;
+//
+//
+        SpawnRoom(hotTub);
+        ////these will be unlocked later, and should be removed from here when the time comes.
+        //roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(hotTub, World.Active);
+        //instantiatedRoom = entityManager.Instantiate(roomEnt);
+        //rooms.Add(entityManager.Instantiate(instantiatedRoom));
+        //gameObjectToRoomEntityMap[hotTub] = instantiatedRoom;
+        //
+        //
+        //
+        //
+        SpawnRoom(coldBath);
+        //roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(coldBath, World.Active);
+        //instantiatedRoom = entityManager.Instantiate(roomEnt);
+        //rooms.Add(entityManager.Instantiate(instantiatedRoom));
+        //gameObjectToRoomEntityMap[coldBath] = instantiatedRoom;
+
 
         // Mapping game objects to entities
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
@@ -139,7 +137,7 @@ public class GameMgr : MonoBehaviour
         var roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(room, World.Active);
         var instantiatedRoom = entityManager.Instantiate(roomEnt);
         rooms.Add(entityManager.Instantiate(instantiatedRoom));
-        gameObjectToRoomEntityMap[coldBath] = instantiatedRoom;
+        gameObjectToRoomEntityMap[room] = instantiatedRoom;
     }
     
     private Entity? InstantiateRandomMonster()
@@ -164,6 +162,16 @@ public class GameMgr : MonoBehaviour
 
     public void MoveMonsterToLobbyWithEcb(EntityCommandBuffer.Concurrent ecb, int index, Entity monsterEntity, float timeToLeave)
     {
+        //remove the entity from its previous room!
+        var roomEnt = World.Active.EntityManager.GetComponentData<InsideRoom>(monsterEntity);
+        var buff = World.Active.EntityManager.GetBuffer<Monster>(roomEnt.RoomEntity);
+        for (int i = buff.Length-1; i >= 0; i--)
+        {
+            if (buff[i].Value.Equals(monsterEntity))
+            {
+                buff.RemoveAt(i);
+            }
+        }
         ecb.SetComponent(index, monsterEntity, new InsideRoom() { RoomEntity = GetRoomEntity(lobby) });
 
         // EntityManager entityManager = World.Active.EntityManager;
@@ -340,7 +348,12 @@ public class GameMgr : MonoBehaviour
             bool clearedForLanding = true;
             for (int i = 0; i < numMons; i++) //iterate over the monsters, monsters may not be in the order
             {
-
+                //stupid hack
+                if (monsterBuff[i].Value == Entity.Null)
+                {
+                    monsterBuff.RemoveAt(i);
+                    //i--; //make sure that we are referencing the next item since RemoveAt will resize the array
+                }
                 var dv = entityManager.GetComponentData<Translation>(monsterBuff[i].Value).Value - finalPos;
 
                 //if monsterBuff[i]

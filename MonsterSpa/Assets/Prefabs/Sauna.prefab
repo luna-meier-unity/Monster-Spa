@@ -4922,7 +4922,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   temprature: 212
   Spots: 5
-  SpawnRad: 1
+  SpawnRad: 1.5
 --- !u!33 &8875593976518558012
 MeshFilter:
   m_ObjectHideFlags: 0

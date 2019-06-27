@@ -8,3 +8,5 @@ public struct Tag_Room : IComponentData {}
 public struct Tag_RemoveMonster : IComponentData
 {
 }
+
+public struct Tag_Lobby : IComponentData {}
