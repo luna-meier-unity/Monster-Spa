@@ -159,7 +159,7 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
-            var monsterType = UnityEngine.Random.Range(0, monsterEnts.Count + 1);
+            var monsterType = UnityEngine.Random.Range(0, monsterEnts.Count);
             var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
             MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value, 5);
             countdown = spawnrate;
