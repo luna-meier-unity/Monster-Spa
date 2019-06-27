@@ -66,7 +66,7 @@ public class MoveToExit : JobComponentSystem
                 // ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = GameMgr.g.GetRoomEntity(GameMgr.g.lobby) });
 
                 var deltaV = StaticExit.exitPos - translation.Value;
-                if (math.length(deltaV) < 0.5f)
+                if (math.length(deltaV) < 0.5f || math.length(deltaV) > 100.0f)
                 {
                     ecb.AddComponent(index,entity,new Tag_RemoveMonster());
                 }
