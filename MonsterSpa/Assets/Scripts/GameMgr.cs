@@ -129,7 +129,12 @@ public class GameMgr : MonoBehaviour
 
     public static bool MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float timeToLeave)
     {
-        // TODO: Check if room is full
+        var entityManager = World.Active.EntityManager;
+        var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
+        if (entityManager.GetComponentData<RoomSpots>(roomEntity).Value <= monsterBuffer.Length)
+        {
+            return false; //room is full, return false
+        }
         var spawnPos = FindSpawnInCircle(roomEntity);
         if (!spawnPos.HasValue)
         {
