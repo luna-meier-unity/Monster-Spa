@@ -23,6 +23,9 @@ public class GameMgr : MonoBehaviour
     public List<GameObject> spawnables = new List<GameObject>();
     private System.Random randomizer = new System.Random();
 
+    Dictionary<GameObject, Entity> gameObjectToMonsterEntityMap = new Dictionary<GameObject, Entity>();
+    Dictionary<GameObject, Entity> gameObjectToRoomEntityMap = new Dictionary<GameObject, Entity>();
+
     //Prefabs
     public GameObject lobby;
     public GameObject sauna;
@@ -53,19 +56,26 @@ public class GameMgr : MonoBehaviour
 
         var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
+        gameObjectToRoomEntityMap[lobby] = roomEnt;
+
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(sauna, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
+        gameObjectToRoomEntityMap[sauna] = roomEnt;
 
 
         //these will be unlocked later, and should be removed from here when the time comes.
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(hotTub, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
+        gameObjectToRoomEntityMap[hotTub] = roomEnt;
+
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(coldBath, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
+        gameObjectToRoomEntityMap[coldBath] = roomEnt;
+
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
-
-
+        gameObjectToRoomEntityMap[cafe] = roomEnt;
+        
         //monsters should just come inside over time
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
         gameObjectToMonsterEntityMap[Chick] = monEnt;
@@ -78,9 +88,7 @@ public class GameMgr : MonoBehaviour
 
         spawnables = new List<GameObject>() { Chick };
     }
-
-    Dictionary<GameObject, Entity> gameObjectToMonsterEntityMap = new Dictionary<GameObject, Entity>();
-
+    
     private Entity? InstantiateRandomMonster()
     {
         if (spawnables.Count == 0)
@@ -91,6 +99,28 @@ public class GameMgr : MonoBehaviour
         var index = randomizer.Next(spawnables.Count);
         var gameObjectToSpawn = spawnables[index];
         return World.Active.EntityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn]);
+    }
+
+
+    Entity GetRoomEntity(GameObject gameObject)
+    {
+        return gameObjectToRoomEntityMap[gameObject];
+    }
+
+    public void MoveMonsterToLobbyWithEcb(EntityCommandBuffer.Concurrent ecb, int index, Entity monsterEntity, float timeToLeave)
+    {
+        ecb.SetComponent(index, monsterEntity, new InsideRoom() { RoomEntity = GetRoomEntity(lobby) });
+
+        // EntityManager entityManager = World.Active.EntityManager;
+        // entityManager.SetComponentData(monsterEntity, new Translation() { Value = spawnPos });
+        // entityManager.SetComponentData(monsterEntity, new InsideRoom() { RoomEntity = roomEntity });
+        // entityManager.SetComponentData(monsterEntity, new TimeToLeave() { TimeRemaining = timeToLeave });
+
+        // var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
+        //so we need to make a monster type
+        /*var mon = new Monster();
+        mon.Value = monsterEntity;
+        monsterBuffer.Add(mon);*/
     }
 
     public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos, float timeToLeave)
@@ -189,8 +219,7 @@ public class GameMgr : MonoBehaviour
         EntityManager entityManager = World.Active.EntityManager;
         var roomSpotComp = entityManager.GetComponentData<RoomSpots>(room);
         var roomPos = entityManager.GetComponentData<Translation>(room).Value;
-
-
+        
         //we should check if there is a monster in the spot we are trying to spawn at!
         foreach (var existingMonster in monsters)
         {

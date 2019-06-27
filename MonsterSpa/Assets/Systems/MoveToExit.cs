@@ -23,26 +23,23 @@ public class MoveToExit : JobComponentSystem
         //public ComponentDataFromEntity<InsideRoom> insideRoom;
         //index is the index of this system that is executing, entity is the entity that is being executed on.
         public void Execute(Entity entity, int index, ref Translation translation, ref Rotation rotation, [ReadOnly] ref TimeToLeave timeToLeave)
-        {
-            
+        {            
             if (timeToLeave.TimeRemaining < 0.01)
             {
                 var directionToExit = normalize(StaticExit.exitPos - translation.Value);
                 rotation.Value = Quaternion.LookRotation(directionToExit);//math.quaternion(directionToExit)  directionToExit
                 translation.Value = directionToExit * monsterspeed + translation.Value;
-                
+                GameMgr.g.MoveMonsterToLobbyWithEcb(ecb, index, entity, 5);
+
+                // ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = GameMgr.g.GetRoomEntity(GameMgr.g.lobby) });
+
                 var deltaV = StaticExit.exitPos - translation.Value;
                 if (math.length(deltaV) < 0.1f)
                 {
                     // TODO: Not working
-                    ecb.AddComponent(index,entity,new Tag_RemoveMonster());
-                    //GameMgr.monsters.Remove(entity);
-                    
-                    //ecb.DestroyEntity(index,entity);
+                    ecb.AddComponent(index,entity,new Tag_RemoveMonster());                                        
                 }
-
-            }
-            
+            }            
         }
     }
 
