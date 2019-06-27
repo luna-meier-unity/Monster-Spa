@@ -106,6 +106,7 @@ namespace Unity.Physics.Extensions
         public static RaycastInput CreateRayCastFromMouse()
         {
             var unityRay = Camera.main.ScreenPointToRay(Input.mousePosition);
+            Debug.DrawRay(unityRay.origin, unityRay.direction, Color.red, 3);
             return new RaycastInput
             {
                 Start = unityRay.origin,
@@ -245,6 +246,8 @@ namespace Unity.Physics.Extensions
         MousePickSystem m_PickSystem;
         bool m_WasDragging = false;
         RigidBody? m_TerrainBody;
+        RigidBody[] m_RoomBodies;
+        Entity m_SelectedEntity;
 
         protected override void OnCreate()
         {
@@ -276,6 +279,28 @@ namespace Unity.Physics.Extensions
             }
         }
 
+        private RigidBody[] RoomBodies
+        {
+            get
+            {
+                var bodies = new System.Collections.Generic.List<RigidBody>();
+                if (m_RoomBodies == null)
+                {
+                    foreach (var body in m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld.Bodies.ToArray())
+                    {
+                        if (GameMgr.rooms.FindIndex(r => r == body.Entity) >= 0)
+                        {
+                            bodies.Add(body);
+                        }
+                    }
+                    
+                    m_RoomBodies = bodies.ToArray();                    
+                }
+
+                return m_RoomBodies;
+            }
+        }
+
         protected override JobHandle OnUpdate(JobHandle inputDeps)
         {
             if (m_MouseGroup.CalculateLength() == 0)
@@ -283,7 +308,11 @@ namespace Unity.Physics.Extensions
                 return inputDeps;
             }
 
-            ComponentDataFromEntity<Translation> Positions = GetComponentDataFromEntity<Translation>();
+            var Positions = GetComponentDataFromEntity<Translation>();
+            var TimeToLeave = GetComponentDataFromEntity<TimeToLeave>();
+            var InsideRooms = GetComponentDataFromEntity<InsideRoom>();
+
+            // var Colliders = GetComponentDataFromEntity<Collider>();
 
             // If there's a pick job, wait for it to finish
             if (m_PickSystem.PickJobHandle != null)
@@ -294,23 +323,63 @@ namespace Unity.Physics.Extensions
             // If there's a picked entity, drag it
             MousePickSystem.SpringData springData = m_PickSystem.SpringDatas[0];
             if (springData.Dragging != 0)
-            {
+            {                
                 m_WasDragging = true;
                 Entity entity = m_PickSystem.SpringDatas[0].Entity;
-                Translation posComponent = Positions[entity];      
-                
+                Translation posComponent = Positions[entity];
+                m_SelectedEntity = entity;
+
                 RaycastHit hit;
                 if (TerrainBody.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), out hit))
                 {
+                    // EntityManager.RemoveComponent(entity, typeof(TimeToLeave));
+                    // EntityManager.RemoveComponent(entity, typeof(InsideRoom));
                     posComponent.Value.x = hit.Position.x;
                     posComponent.Value.z = hit.Position.z;
                     Positions[entity] = posComponent;
                 }                
             }
-            else if (m_WasDragging) {
+            else if (m_WasDragging)
+            {
+                // Debug.Log(RoomBodies.Length);
+                // TODO: Check if the entity collides with any of the rooms
+                var monster = m_PickSystem.SpringDatas[0].Entity;
                 m_WasDragging = false;
-                
-                // TODO: Drop on a room
+                Entity? selectedRoom = null;
+                var raycastInput = MousePickBehaviour.CreateRayCastFromMouse();
+                               
+                foreach (var room in RoomBodies)
+                {                    
+                    RaycastHit hit;
+                    if (true) //room.CastRay(raycastInput, out hit))
+                    {
+                        Debug.Log("Found room");
+                        var spawnPoint = GameMgr.FindSpawnInCircle(room.Entity);
+                        if (spawnPoint != null)
+                        {
+                            // Debug.Log($"Spawn point - ${spawnPoint.Value.x}, ${spawnPoint.Value.y}, ${spawnPoint.Value.z}");
+                            Entity entity = m_SelectedEntity;
+                            Translation posComponent = Positions[entity];
+                            GameMgr.MoveMonsterToRoom(entity, room.Entity);
+
+                            /*
+                            posComponent.Value.x = spawnPoint.Value.x;
+                            posComponent.Value.y = spawnPoint.Value.y;
+                            posComponent.Value.z = spawnPoint.Value.z;
+                            Positions[entity] = posComponent;
+                            
+                            var timeToLeaveComponent = TimeToLeave[entity];
+                            timeToLeaveComponent.TimeRemaining = 10;
+                            TimeToLeave[entity] = timeToLeaveComponent;
+
+                            var insideRoomComponent = InsideRooms[entity];
+                            insideRoomComponent.RoomEntity = room.Entity;
+                            InsideRooms[entity] = insideRoomComponent;*/
+                        }
+                        
+                        break;
+                    }
+                }                
             }
 
             return inputDeps;

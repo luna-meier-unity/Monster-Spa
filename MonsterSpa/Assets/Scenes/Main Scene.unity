@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 27170630}
-  m_IndirectSpecularColor: {r: 0.00071085314, g: 0.06072414, b: 0.16579062, a: 1}
+  m_IndirectSpecularColor: {r: 0.00076562614, g: 0.060729995, b: 0.16576147, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -8903,7 +8903,7 @@ MonoBehaviour:
   Ghost: {fileID: 4779150490070706111, guid: c8de20e8e46664005a9afece9d01d018, type: 3}
   Sandal: {fileID: 4779150490070706111, guid: c74faf720b99249d0b8e3a02e3692993, type: 3}
   Hundun: {fileID: 4779150490070706111, guid: ee7ceb40282b841dc9a7702b7bfd0967, type: 3}
-  spawnrate: 1
+  spawnrate: 5
 --- !u!4 &2091770499
 Transform:
   m_ObjectHideFlags: 0

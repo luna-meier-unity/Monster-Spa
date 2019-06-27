@@ -98,51 +98,36 @@ public class GameMgr : MonoBehaviour
 
     }
 
-    // Update is called once per frame
-    void Update()
+    public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos)
     {
         EntityManager entityManager = World.Active.EntityManager;
-        var dt = Time.deltaTime;
-        if (countdown < 0.01)
+        entityManager.SetComponentData(monsterEntity, new Translation() { Value = spawnPos });
+        entityManager.SetComponentData(monsterEntity, new InsideRoom() { RoomEntity = roomEntity });
+
+        var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
+        //so we need to make a monster type
+        var mon = new Monster();
+        mon.Value = monsterEntity;
+        monsterBuffer.Add(mon);
+    }
+
+    public static bool MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity)
+    {
+        // TODO: Check if room is full
+        var spawnPos = FindSpawnInCircle(roomEntity);
+        if (!spawnPos.HasValue)
         {
-
-
-
-            //spawn a new monster
-            var monsterEnt = entityManager.Instantiate(monsterEnts[(int) MonsterType.Chick]);
-            monsters.Add(monsterEnt);
-
-
-
-
-
-            float3? spawnPos = FindSpawnInCircle(rooms[(int) RoomType.Lobby]);
-            if (spawnPos.HasValue)
-            {
-                entityManager.SetComponentData(monsterEnt, new Translation() {Value = spawnPos.Value});
-            
-
-
-                var roomEntity = rooms[(int) RoomType.Lobby];
-                entityManager.SetComponentData(monsterEnt, new InsideRoom() {RoomEntity = roomEntity});
-
-                var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
-                //so we need to make a monster type
-                var mon = new Monster();
-                mon.Value = monsterEnt;
-                monsterBuffer.Add(mon);
-            }
-
-        countdown = spawnrate;
+            return false;
         }
-        else
-        {
-            countdown -= dt;
-        }
-        
-        
-        
+
+        MoveMonsterToRoom(monsterEntity, roomEntity, spawnPos.Value);
+        return true;
+    }
+
+    private void CleanupMonsters()
+    {
         //lets destroy monsters! this happens outside of jobs to make sure we dont need to schedule weird things.
+        EntityManager entityManager = World.Active.EntityManager;
         var destroyArray = monstersToDestroyQuery.ToEntityArray(Allocator.TempJob);
 
         foreach (var dyingMon in destroyArray)
@@ -150,7 +135,7 @@ public class GameMgr : MonoBehaviour
             monsters.Remove(dyingMon);
             var room = entityManager.GetComponentData<InsideRoom>(dyingMon).RoomEntity;
             var monsterBuffer = entityManager.GetBuffer<Monster>(room);
-            for (int i = monsterBuffer.Length; i < 0 ; i--)
+            for (int i = monsterBuffer.Length; i < 0; i--)
             {
                 if (monsterBuffer[i].Value == dyingMon)
                 {
@@ -160,6 +145,33 @@ public class GameMgr : MonoBehaviour
         }
         entityManager.DestroyEntity(destroyArray);
         destroyArray.Dispose();
+    }
+    
+    // Update is called once per frame
+    void Update()
+    {        
+        EntityManager entityManager = World.Active.EntityManager;
+        var dt = Time.deltaTime;
+        if (countdown < 0.01)
+        {            
+            var roomEntity = rooms[(int)RoomType.Lobby];
+            var spawnPoint = FindSpawnInCircle(roomEntity);
+            if (!spawnPoint.HasValue)
+            {
+                return;
+            }
+
+            var monsterType = UnityEngine.Random.Range(0, typeof(MonsterType).GetEnumValues().Length);
+            var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
+            MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value);
+            countdown = spawnrate;
+        }
+        else
+        {
+            countdown -= dt;
+        }
+
+        CleanupMonsters();
     }
 
     public static float3? FindSpawnInCircle(Entity room)
