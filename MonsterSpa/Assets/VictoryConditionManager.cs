@@ -236,7 +236,7 @@ public class VictoryConditionManager : MonoBehaviour
                 
                 case 6: //Unlock Gloom
                     
-                    GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun, GameMgr.g.Ghost };
+                    //GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun, GameMgr.g.Ghost };
                     
                     UnmetConditions.Add(new VictoryCondition(7,
                         new RoomState(0,0,0,0),
@@ -254,7 +254,7 @@ public class VictoryConditionManager : MonoBehaviour
                 
                 case 8: //Unlock Sandal
                     
-                    GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun, GameMgr.g.Ghost, GameMgr.g.Sandal };
+                    //GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun, GameMgr.g.Ghost, GameMgr.g.Sandal };
                     
                     UnmetConditions.Add(new VictoryCondition(9,
                         new RoomState(0,0,0,0),
