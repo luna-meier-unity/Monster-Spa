@@ -23,6 +23,11 @@ public class ConvertRoom : MonoBehaviour, IConvertGameObjectToEntity
         var spawnRadius = new SpawnRadius();
         spawnRadius.Value = SpawnRad;
 
+        if (name.name.ToString() == "Lobby")
+        {
+            var isLobby = new Tag_Lobby();
+           entityManager.AddComponentData(entity, isLobby);
+        }
 
         entityManager.AddBuffer<Monster>(entity);
         entityManager.AddComponentData(entity, roomTag);

@@ -19,16 +19,12 @@ public class ConvertMonster : MonoBehaviour, IConvertGameObjectToEntity
         temperature.Value = 68;
         
         var timeRemaining = new TimeToLeave();
-        timeRemaining.TimeRemaining = 5;
+        timeRemaining.TimeRemaining = 60;
         
         
         entityManager.AddComponentData(entity, hunger);
         entityManager.AddComponentData(entity, happy);
         entityManager.AddComponentData(entity, temperature);
         entityManager.AddComponentData(entity, timeRemaining);
-        entityManager.AddComponentData(entity, new MonsterTypeComponent()
-        {
-            GameObjectId = GetInstanceID(),
-        });
     }
 }
