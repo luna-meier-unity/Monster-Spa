@@ -66,6 +66,8 @@ public class GameMgr : MonoBehaviour
 
         monstersToDestroyQuery = entityManager.CreateEntityQuery(typeof(Tag_RemoveMonster));
 
+        
+        //SpawnRoom(lobby);
         var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
         var instantiatedRoom = entityManager.Instantiate(roomEnt);
         rooms.Add(instantiatedRoom);
@@ -82,16 +84,20 @@ public class GameMgr : MonoBehaviour
         instantiatedRoom = entityManager.Instantiate(roomEnt);
         rooms.Add(entityManager.Instantiate(instantiatedRoom));
         gameObjectToRoomEntityMap[hotTub] = instantiatedRoom;
-
+        
+        
+        
+        
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(coldBath, World.Active);
         instantiatedRoom = entityManager.Instantiate(roomEnt);
         rooms.Add(entityManager.Instantiate(instantiatedRoom));
         gameObjectToRoomEntityMap[coldBath] = instantiatedRoom;
 
-        roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
-        instantiatedRoom = entityManager.Instantiate(roomEnt);
-        rooms.Add(entityManager.Instantiate(instantiatedRoom));
-        gameObjectToRoomEntityMap[cafe] = instantiatedRoom;
+        //this no longer exists
+        //roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
+        //instantiatedRoom = entityManager.Instantiate(roomEnt);
+        //rooms.Add(entityManager.Instantiate(instantiatedRoom));
+        //gameObjectToRoomEntityMap[cafe] = instantiatedRoom;
 
         // Mapping game objects to entities
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
@@ -125,6 +131,17 @@ public class GameMgr : MonoBehaviour
         spawnables = new List<GameObject>() { Chick };
     }
 
+    public void SpawnRoom(GameObject room)
+    {
+        //FOR THE LOVE OF GOD DO NOT SPAWN THE SAME ROOM TWICE
+        //room is found in Gamemgr.<roomname>, such as sauna. this is a reference from the editor field.
+        var entityManager = World.Active.EntityManager;
+        var roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(room, World.Active);
+        var instantiatedRoom = entityManager.Instantiate(roomEnt);
+        rooms.Add(entityManager.Instantiate(instantiatedRoom));
+        gameObjectToRoomEntityMap[coldBath] = instantiatedRoom;
+    }
+    
     private Entity? InstantiateRandomMonster()
     {
         if (spawnables.Count == 0)
