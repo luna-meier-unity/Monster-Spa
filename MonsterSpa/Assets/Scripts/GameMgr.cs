@@ -1,22 +1,10 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
-using System;
-using System.Threading;
-using System.Xml;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine.UIElements;
-
-public enum MonsterType
-{
-    Chick = 0,
-    Ghost = 1,
-    Sandal = 2,
-    Hundun = 3
-}
+using UnityEngine;
 
 public enum RoomType
 {
@@ -97,12 +85,12 @@ public class GameMgr : MonoBehaviour
 
     }
 
-    public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos)
+    public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos, float timeToLeave)
     {
         EntityManager entityManager = World.Active.EntityManager;
         entityManager.SetComponentData(monsterEntity, new Translation() { Value = spawnPos });
         entityManager.SetComponentData(monsterEntity, new InsideRoom() { RoomEntity = roomEntity });
-        entityManager.SetComponentData(monsterEntity, new TimeToLeave() { TimeRemaining = 5 });
+        entityManager.SetComponentData(monsterEntity, new TimeToLeave() { TimeRemaining = timeToLeave });
 
         var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
         //so we need to make a monster type
@@ -111,7 +99,7 @@ public class GameMgr : MonoBehaviour
         monsterBuffer.Add(mon);
     }
 
-    public static bool MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity)
+    public static bool MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float timeToLeave)
     {
         // TODO: Check if room is full
         var spawnPos = FindSpawnInCircle(roomEntity);
@@ -120,7 +108,7 @@ public class GameMgr : MonoBehaviour
             return false;
         }
 
-        MoveMonsterToRoom(monsterEntity, roomEntity, spawnPos.Value);
+        MoveMonsterToRoom(monsterEntity, roomEntity, spawnPos.Value, timeToLeave);
         return true;
     }
 
@@ -146,6 +134,16 @@ public class GameMgr : MonoBehaviour
         entityManager.DestroyEntity(destroyArray);
         destroyArray.Dispose();
     }
+
+    void UpdateRoomState(Entity roomEntity)
+    {
+        //VictoryConditionManager.g.coldBathState
+    }
+
+    void UpdateRoomStates()
+    {
+        //VictoryConditionManager.g.coldBathState 
+    }
     
     // Update is called once per frame
     void Update()
@@ -161,9 +159,9 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
-            var monsterType = UnityEngine.Random.Range(0, typeof(MonsterType).GetEnumValues().Length - 1);
+            var monsterType = UnityEngine.Random.Range(0, monsterEnts.Count + 1);
             var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
-            MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value);
+            MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value, 5);
             countdown = spawnrate;
         }
         else
