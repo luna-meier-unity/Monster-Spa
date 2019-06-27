@@ -35,7 +35,7 @@ public class MoveToExit : JobComponentSystem
                 if (math.length(deltaV) < 0.1f)
                 {
                     // TODO: Not working
-                    //ecb.AddComponent(index,entity,new Tag_RemoveMonster());
+                    ecb.AddComponent(index,entity,new Tag_RemoveMonster());
                     //GameMgr.monsters.Remove(entity);
                     
                     //ecb.DestroyEntity(index,entity);

@@ -49,17 +49,17 @@ public class GameMgr : MonoBehaviour
             throw new Exception("Multiple GameMgr gameobject components in scene, please only have one constant gameobject in the scene.");
 
         g = this;
-        
+
         EntityManager entityManager = World.Active.EntityManager;
-        
+
         monstersToDestroyQuery = entityManager.CreateEntityQuery(typeof(Tag_RemoveMonster));
-        
+
         var roomEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(lobby, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(sauna, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
-        
-        
+
+
         //these will be unlocked later, and should be removed from here when the time comes.
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(hotTub, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
@@ -67,8 +67,8 @@ public class GameMgr : MonoBehaviour
         rooms.Add(entityManager.Instantiate(roomEnt));
         roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(cafe, World.Active);
         rooms.Add(entityManager.Instantiate(roomEnt));
-        
-        
+
+
         //monsters should just come inside over time
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
         gameObjectToMonsterEntityMap[Chick] = monEnt;
@@ -91,8 +91,8 @@ public class GameMgr : MonoBehaviour
             return null;
         }
 
-        var index = randomizer.Next(spawnables.Count);        
-        var gameObjectToSpawn = spawnables[index];        
+        var index = randomizer.Next(spawnables.Count);
+        var gameObjectToSpawn = spawnables[index];
         return World.Active.EntityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn]);
     }
 
@@ -134,9 +134,9 @@ public class GameMgr : MonoBehaviour
             monsters.Remove(dyingMon);
             var room = entityManager.GetComponentData<InsideRoom>(dyingMon).RoomEntity;
             var monsterBuffer = entityManager.GetBuffer<Monster>(room);
-            for (int i = monsterBuffer.Length; i < 0; i--)
+            for (int i = monsterBuffer.Length-1; i >= 0; i--)
             {
-                if (monsterBuffer[i].Value == dyingMon)
+                if (monsterBuffer[i].Value.Equals(dyingMon))
                 {
                     monsterBuffer.RemoveAt(i);
                 }
@@ -153,16 +153,16 @@ public class GameMgr : MonoBehaviour
 
     void UpdateRoomStates()
     {
-        //VictoryConditionManager.g.coldBathState 
+        //VictoryConditionManager.g.coldBathState
     }
-    
+
     // Update is called once per frame
     void Update()
-    {        
+    {
         EntityManager entityManager = World.Active.EntityManager;
         var dt = Time.deltaTime;
         if (countdown < 0.01)
-        {            
+        {
             var roomEntity = rooms[(int)RoomType.Lobby];
             var spawnPoint = FindSpawnInCircle(roomEntity);
             if (!spawnPoint.HasValue)
@@ -192,8 +192,8 @@ public class GameMgr : MonoBehaviour
         EntityManager entityManager = World.Active.EntityManager;
         var roomSpotComp = entityManager.GetComponentData<RoomSpots>(room);
         var roomPos = entityManager.GetComponentData<Translation>(room).Value;
-        
-        
+
+
         //we should check if there is a monster in the spot we are trying to spawn at!
         foreach (var existingMonster in monsters)
         {
@@ -209,7 +209,7 @@ public class GameMgr : MonoBehaviour
         var finalPos = new float3(0,0,0);
         float posx = 0;
         float posz = 0;
-        
+
 
         for (int j = 0; j < roomSpotComp.Value; j++) //for each of our spots, check if there is an entity in that spot
         {
@@ -219,7 +219,7 @@ public class GameMgr : MonoBehaviour
             bool clearedForLanding = true;
             for (int i = 0; i < numMons; i++) //iterate over the monsters, monsters may not be in the order
             {
-                
+
                 var dv = entityManager.GetComponentData<Translation>(monsterBuff[i].Value).Value - finalPos;
 
                 //if monsterBuff[i]
@@ -229,7 +229,7 @@ public class GameMgr : MonoBehaviour
                 if (vectordv.magnitude < 0.15f)
                 {
                     clearedForLanding = false;
-                    
+
                     if (iterateAngle - (360.0f / roomSpotComp.Value) * (math.PI / 180) < 0.01 && i > 0)
                     {
                         //we have circled! return null
@@ -246,7 +246,7 @@ public class GameMgr : MonoBehaviour
             iterateAngle += intervalAngle; //move to the next spot in the circle
             clearedForLanding = true; //reset, so we can check the next spot!
         }
-        
+
         //finalPos = roomPos + new float3(posx, 0.0f, posz); //dispite its name, we want to take its initial value.
 
         posx = (float) Math.Cos(iterateAngle);
