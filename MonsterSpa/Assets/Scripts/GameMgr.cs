@@ -102,6 +102,7 @@ public class GameMgr : MonoBehaviour
         EntityManager entityManager = World.Active.EntityManager;
         entityManager.SetComponentData(monsterEntity, new Translation() { Value = spawnPos });
         entityManager.SetComponentData(monsterEntity, new InsideRoom() { RoomEntity = roomEntity });
+        entityManager.SetComponentData(monsterEntity, new TimeToLeave() { TimeRemaining = 5 });
 
         var monsterBuffer = entityManager.GetBuffer<Monster>(roomEntity);
         //so we need to make a monster type
