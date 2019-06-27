@@ -335,6 +335,7 @@ namespace Unity.Physics.Extensions
                     posComponent.Value.x = hit.Position.x;
                     posComponent.Value.z = hit.Position.z;
                     Positions[entity] = posComponent;
+                    GameMgr.g.PlayPickMonsterSoundEffect(entity);
                 }                
             }
             else if (m_WasDragging)

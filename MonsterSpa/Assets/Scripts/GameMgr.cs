@@ -5,6 +5,7 @@ using Unity.Entities;
 using Unity.Mathematics;
 using Unity.Transforms;
 using UnityEngine;
+using System.Linq;
 
 public enum RoomType
 {
@@ -15,15 +16,26 @@ public enum RoomType
     Cafe = 4
 }
 
-public class GameMgr : MonoBehaviour
+class MonsterConfig
 {
+    public SoundEffectType onPickSoundEffect;
+    public Entity entity;
+}
+
+struct MonsterTypeComponent : IComponentData
+{
+    public int GameObjectId;
+}
+
+public class GameMgr : MonoBehaviour
+{    
     public static GameMgr g;
     public static List<Entity> rooms = new List<Entity>();
     public static List<Entity> monsters = new List<Entity>();
     public List<GameObject> spawnables = new List<GameObject>();
     private System.Random randomizer = new System.Random();
 
-    Dictionary<GameObject, Entity> gameObjectToMonsterEntityMap = new Dictionary<GameObject, Entity>();
+    Dictionary<GameObject, MonsterConfig> gameObjectToMonsterEntityMap = new Dictionary<GameObject, MonsterConfig>();
     Dictionary<GameObject, Entity> gameObjectToRoomEntityMap = new Dictionary<GameObject, Entity>();
 
     //Prefabs
@@ -76,16 +88,35 @@ public class GameMgr : MonoBehaviour
         rooms.Add(entityManager.Instantiate(roomEnt));
         gameObjectToRoomEntityMap[cafe] = roomEnt;
 
-        //monsters should just come inside over time
+        // Mapping game objects to entities
         var monEnt = GameObjectConversionUtility.ConvertGameObjectHierarchy(Chick, World.Active);
-        gameObjectToMonsterEntityMap[Chick] = monEnt;
-        monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Ghost, World.Active);
-        gameObjectToMonsterEntityMap[Ghost] = monEnt;
-        monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Sandal, World.Active);
-        gameObjectToMonsterEntityMap[Sandal] = monEnt;
-        monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Hundun, World.Active);
-        gameObjectToMonsterEntityMap[Hundun] = monEnt;
+        gameObjectToMonsterEntityMap[Chick] = new MonsterConfig()
+        {
+            onPickSoundEffect = SoundEffectType.Chirp,
+            entity = monEnt,
+        };
 
+        monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Ghost, World.Active);
+        gameObjectToMonsterEntityMap[Ghost] = new MonsterConfig()
+        {
+            onPickSoundEffect = SoundEffectType.Wind,
+            entity = monEnt,
+        };
+
+        monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Sandal, World.Active);
+        gameObjectToMonsterEntityMap[Sandal] = new MonsterConfig()
+        {
+            onPickSoundEffect = SoundEffectType.Cockneye,
+            entity = monEnt,
+        };
+        
+        monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Hundun, World.Active);
+        gameObjectToMonsterEntityMap[Hundun] = new MonsterConfig()
+        {
+            onPickSoundEffect = SoundEffectType.Buluboop,
+            entity = monEnt,
+        };
+        
         spawnables = new List<GameObject>() { Chick };
     }
 
@@ -98,10 +129,17 @@ public class GameMgr : MonoBehaviour
 
         var index = randomizer.Next(spawnables.Count);
         var gameObjectToSpawn = spawnables[index];
-        return World.Active.EntityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn]);
+        
+        var entityManager = World.Active.EntityManager;
+        var entity = entityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn].entity);
+        entityManager.AddComponentData(entity, new MonsterTypeComponent()
+        {
+            GameObjectId = gameObjectToSpawn.GetInstanceID(),
+        });
+
+        return entity;
     }
-
-
+    
     Entity GetRoomEntity(GameObject gameObject)
     {
         return gameObjectToRoomEntityMap[gameObject];
@@ -121,6 +159,20 @@ public class GameMgr : MonoBehaviour
         /*var mon = new Monster();
         mon.Value = monsterEntity;
         monsterBuffer.Add(mon);*/
+    }
+
+    public void PlayPickMonsterSoundEffect(Entity monsterEntity)
+    {
+        var monsterTypeComponent = World.Active.EntityManager.GetComponentData<MonsterTypeComponent>(monsterEntity);
+
+        foreach (var kvp in gameObjectToMonsterEntityMap)
+        {            
+            if (kvp.Key.GetInstanceID() == monsterTypeComponent.GameObjectId)
+            {
+                SoundEffectManager.g.PlaySoundEffect(kvp.Value.onPickSoundEffect);
+                return;
+            }
+        }        
     }
 
     public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos, float timeToLeave)
@@ -228,6 +280,7 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
+            SoundEffectManager.g.PlaySoundEffect(SoundEffectType.Bell);
             MoveMonsterToRoom(monster.Value, roomEntity, spawnPoint.Value, 5);
             countdown = spawnrate;
         }
