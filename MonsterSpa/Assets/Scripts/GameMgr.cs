@@ -126,7 +126,7 @@ public class GameMgr : MonoBehaviour
             entity = monEnt,
         };
         
-        spawnables = new List<GameObject>() { Chick };
+        spawnables = new List<GameObject>() { Chick, Ghost, Sandal, Hundun };
     }
 
     public void SpawnRoom(GameObject room)
