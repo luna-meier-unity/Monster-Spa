@@ -89,47 +89,6 @@ public class VictoryConditionManager : MonoBehaviour
             new RoomState(0,0,0,0),
             new RoomState(4,0,0,0)));
         
-        UnmetConditions.Add(new VictoryCondition(2,
-            new RoomState(3,0,0,0),
-            new RoomState(0,0,0,0),
-            new RoomState(0,0,0,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(3,
-            new RoomState(5,0,0,0),
-            new RoomState(0,0,0,0),
-            new RoomState(0,0,0,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(4,
-            new RoomState(0,2,0,0),
-            new RoomState(0,0,0,0),
-            new RoomState(0,0,0,0)));
-        
-        //5/////////////////////////////////////////////////////////////////////
-        UnmetConditions.Add(new VictoryCondition(5,
-            new RoomState(1,3,0,0),
-            new RoomState(0,0,0,0),
-            new RoomState(0,0,0,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(6,
-            new RoomState(0,0,0,0),
-            new RoomState(1,3,0,0),
-            new RoomState(0,0,0,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(7,
-            new RoomState(0,0,0,0),
-            new RoomState(2,0,1,0),
-            new RoomState(0,0,0,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(8,
-            new RoomState(0,0,0,0),
-            new RoomState(2,1,2,0),
-            new RoomState(0,0,0,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(9,
-            new RoomState(0,0,0,0),
-            new RoomState(0,0,0,0),
-            new RoomState(1,1,1,1)));
-        
         //10////////////////////////////////////////////////////////////////////
         UnmetConditions.Add(new VictoryCondition(10,
             new RoomState(2,0,0,0),
@@ -185,6 +144,34 @@ public class VictoryConditionManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (saunaState.chicks + coldBathState.chicks + hotSpringsState.chicks > 0)
+        {
+            SoundEffectManager.g.StartAmbientNoise(AmbientNoiseType.Chirping);
+        }
+        else
+        {
+            SoundEffectManager.g.StopAmbientNoise(AmbientNoiseType.Chirping);
+        }
+        
+        if (saunaState.glooms + coldBathState.glooms + hotSpringsState.glooms > 0)
+        {
+            SoundEffectManager.g.StartAmbientNoise(AmbientNoiseType.Rain);
+        }
+        else
+        {
+            SoundEffectManager.g.StopAmbientNoise(AmbientNoiseType.Rain);
+        }
+        
+        if (saunaState.chicks + saunaState.hunduns + saunaState.glooms + saunaState.sandles > 0)
+        {
+            SoundEffectManager.g.StartAmbientNoise(AmbientNoiseType.LowSimmer);
+        }
+        else
+        {
+            SoundEffectManager.g.StopAmbientNoise(AmbientNoiseType.LowSimmer);
+        }
+        
+        
         if (UnmetConditions.Count <= 0 || PauseChecking)
             return;
         
@@ -192,16 +179,95 @@ public class VictoryConditionManager : MonoBehaviour
         {
             //TODO WIN
 
+            bool playSuccessSound = false;
+
             switch (UnmetConditions[CurrentCheckIndex].DialogueIndex)
             {
-                case 0:
+                case 1://Unlock Cold Bath
+                    UnmetConditions.Add(new VictoryCondition(2,
+                        new RoomState(3,0,0,0),
+                        new RoomState(0,0,0,0),
+                        new RoomState(0,0,0,0)));
+        
+                    UnmetConditions.Add(new VictoryCondition(3,
+                        new RoomState(5,0,0,0),
+                        new RoomState(0,0,0,0),
+                        new RoomState(0,0,0,0)));
+
+                    playSuccessSound = true;
+                    break;
+                case 3: //Unlock Hundun
+                    
+                    GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun };
+                    
+                    UnmetConditions.Add(new VictoryCondition(4,
+                        new RoomState(0,2,0,0),
+                        new RoomState(0,0,0,0),
+                        new RoomState(0,0,0,0)));
+        
+        
+                    UnmetConditions.Add(new VictoryCondition(5,
+                        new RoomState(1,3,0,0),
+                        new RoomState(0,0,0,0),
+                        new RoomState(0,0,0,0)));
+                    
+                    playSuccessSound = true;
                     break;
                 
+                case 5: //Unlock Hot spring
+
+                    UnmetConditions.Add(new VictoryCondition(6,
+                        new RoomState(0,0,0,0),
+                        new RoomState(1,3,0,0),
+                        new RoomState(0,0,0,0)));
+                    
+                    playSuccessSound = true;
+                    
+                    
+                    break;
+                
+                case 6: //Unlock Gloom
+                    
+                    GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun, GameMgr.g.Ghost };
+                    
+                    UnmetConditions.Add(new VictoryCondition(7,
+                        new RoomState(0,0,0,0),
+                        new RoomState(2,0,1,0),
+                        new RoomState(0,0,0,0)));
+        
+                    UnmetConditions.Add(new VictoryCondition(8,
+                        new RoomState(0,0,0,0),
+                        new RoomState(2,1,2,0),
+                        new RoomState(0,0,0,0)));
+                    
+                    playSuccessSound = true;
+                    
+                    break;
+                
+                case 8: //Unlock Sandal
+                    
+                    GameMgr.g.spawnables = new List<GameObject>() { GameMgr.g.Chick, GameMgr.g.Hundun, GameMgr.g.Ghost, GameMgr.g.Sandal };
+                    
+                    UnmetConditions.Add(new VictoryCondition(9,
+                        new RoomState(0,0,0,0),
+                        new RoomState(0,0,0,0),
+                        new RoomState(1,1,1,1)));
+
+                    
+                    playSuccessSound = true;
+                    break;
+                
+                case 9: //Victory!
+                    
+                    playSuccessSound = true;
+                    break;
+                    
                 default:
                     break;
             }
 
             DialogueManager.g.currentSection = UnmetConditions[CurrentCheckIndex].DialogueIndex;
+            DialogueManager.g.playSuccessSound = playSuccessSound;
             
             UnmetConditions.RemoveAt(CurrentCheckIndex);
             return;
