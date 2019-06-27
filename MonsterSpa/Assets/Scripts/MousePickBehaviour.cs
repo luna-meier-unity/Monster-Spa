@@ -332,8 +332,6 @@ namespace Unity.Physics.Extensions
                 RaycastHit hit;
                 if (TerrainBody.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), out hit))
                 {
-                    // EntityManager.RemoveComponent(entity, typeof(TimeToLeave));
-                    // EntityManager.RemoveComponent(entity, typeof(InsideRoom));
                     posComponent.Value.x = hit.Position.x;
                     posComponent.Value.z = hit.Position.z;
                     Positions[entity] = posComponent;
@@ -341,7 +339,6 @@ namespace Unity.Physics.Extensions
             }
             else if (m_WasDragging)
             {
-                // Debug.Log(RoomBodies.Length);
                 // TODO: Check if the entity collides with any of the rooms
                 var monster = m_PickSystem.SpringDatas[0].Entity;
                 m_WasDragging = false;
@@ -357,24 +354,9 @@ namespace Unity.Physics.Extensions
                         var spawnPoint = GameMgr.FindSpawnInCircle(room.Entity);
                         if (spawnPoint != null)
                         {
-                            // Debug.Log($"Spawn point - ${spawnPoint.Value.x}, ${spawnPoint.Value.y}, ${spawnPoint.Value.z}");
                             Entity entity = m_SelectedEntity;
                             Translation posComponent = Positions[entity];
                             GameMgr.MoveMonsterToRoom(entity, room.Entity);
-
-                            /*
-                            posComponent.Value.x = spawnPoint.Value.x;
-                            posComponent.Value.y = spawnPoint.Value.y;
-                            posComponent.Value.z = spawnPoint.Value.z;
-                            Positions[entity] = posComponent;
-                            
-                            var timeToLeaveComponent = TimeToLeave[entity];
-                            timeToLeaveComponent.TimeRemaining = 10;
-                            TimeToLeave[entity] = timeToLeaveComponent;
-
-                            var insideRoomComponent = InsideRooms[entity];
-                            insideRoomComponent.RoomEntity = room.Entity;
-                            InsideRooms[entity] = insideRoomComponent;*/
                         }
                         
                         break;
