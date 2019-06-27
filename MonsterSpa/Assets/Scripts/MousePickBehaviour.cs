@@ -307,7 +307,7 @@ namespace Unity.Physics.Extensions
         {
             foreach (var currentHit in hits.ToArray())
             {
-                var hitEntity = bodies[currentHit.RigidBodyIndex + 1].Entity;
+                var hitEntity = bodies[currentHit.RigidBodyIndex].Entity;
                 if (hitEntity == targetEntity)
                 {
                     return currentHit;

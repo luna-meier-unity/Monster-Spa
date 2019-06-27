@@ -136,7 +136,7 @@ public class GameMgr : MonoBehaviour
         var entityManager = World.Active.EntityManager;
         var roomEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(room, World.Active);
         var instantiatedRoom = entityManager.Instantiate(roomEnt);
-        rooms.Add(entityManager.Instantiate(instantiatedRoom));
+        rooms.Add(instantiatedRoom);
         gameObjectToRoomEntityMap[room] = instantiatedRoom;
     }
     
@@ -280,15 +280,53 @@ public class GameMgr : MonoBehaviour
         entityManager.DestroyEntity(destroyArray);
         destroyArray.Dispose();
     }
-
-    void UpdateRoomState(Entity roomEntity)
-    {
-        //VictoryConditionManager.g.coldBathState
-    }
-
+    
     void UpdateRoomStates()
     {
-        //VictoryConditionManager.g.coldBathState
+        var entityManager = World.Active.EntityManager;
+        
+        foreach (var kvp in gameObjectToRoomEntityMap)
+        {
+            var roomState = new RoomState();
+            var monsterBuff = entityManager.GetBuffer<Monster>(kvp.Value);
+            Debug.Log(monsterBuff.Length);
+
+            for (int i = 0; i < monsterBuff.Length; i++)
+            {
+                var entity = monsterBuff[i].Value;
+                var monsterType = entityManager.GetComponentData<MonsterTypeComponent>(entity);
+                if (monsterType.GameObjectId == Chick.GetInstanceID())
+                {
+                    roomState.chicks++;
+                }
+                if (monsterType.GameObjectId == Ghost.GetInstanceID())
+                {
+                    roomState.glooms++;
+                }
+                if (monsterType.GameObjectId == Sandal.GetInstanceID())
+                {
+                    roomState.sandles++;
+                }
+                if (monsterType.GameObjectId == Hundun.GetInstanceID())
+                {
+                    roomState.hunduns++;
+                }
+            }
+
+            if (kvp.Key == hotTub)
+            {
+                Debug.Log(roomState.chicks);
+                VictoryConditionManager.g.hotSpringsState = roomState;
+            }
+            else if (kvp.Key == sauna)
+            {
+                VictoryConditionManager.g.saunaState = roomState;
+            }
+            else if (kvp.Key == coldBath)
+            {
+                VictoryConditionManager.g.coldBathState = roomState;
+            }
+        }
     }
 
     // Update is called once per frame
@@ -298,7 +336,7 @@ public class GameMgr : MonoBehaviour
         var dt = Time.deltaTime;
         if (countdown < 0.01)
         {
-            var roomEntity = rooms[(int)RoomType.Lobby];
+            var roomEntity = gameObjectToRoomEntityMap[lobby];
             var spawnPoint = FindSpawnInCircle(roomEntity);
             if (!spawnPoint.HasValue)
             {
@@ -321,6 +359,7 @@ public class GameMgr : MonoBehaviour
         }
 
         CleanupMonsters();
+        UpdateRoomStates();
     }
 
     public static float3? FindSpawnInCircle(Entity room)
