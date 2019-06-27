@@ -6,9 +6,8 @@ using UnityEngine;
 public class ConvertMonster : MonoBehaviour, IConvertGameObjectToEntity
 {
     public void Convert(Entity entity, EntityManager entityManager, GameObjectConversionSystem conversionSystem)
-    {
+    {       
         entityManager.AddComponent(entity,typeof(InsideRoom));
-        
         
         var hunger = new HungerLevel();
         hunger.Value = 50;
@@ -27,5 +26,9 @@ public class ConvertMonster : MonoBehaviour, IConvertGameObjectToEntity
         entityManager.AddComponentData(entity, happy);
         entityManager.AddComponentData(entity, temperature);
         entityManager.AddComponentData(entity, timeRemaining);
+        entityManager.AddComponentData(entity, new MonsterTypeComponent()
+        {
+            GameObjectId = GetInstanceID(),
+        });
     }
 }

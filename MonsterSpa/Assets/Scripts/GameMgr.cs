@@ -132,11 +132,6 @@ public class GameMgr : MonoBehaviour
         
         var entityManager = World.Active.EntityManager;
         var entity = entityManager.Instantiate(gameObjectToMonsterEntityMap[gameObjectToSpawn].entity);
-        entityManager.AddComponentData(entity, new MonsterTypeComponent()
-        {
-            GameObjectId = gameObjectToSpawn.GetInstanceID(),
-        });
-
         return entity;
     }
     
