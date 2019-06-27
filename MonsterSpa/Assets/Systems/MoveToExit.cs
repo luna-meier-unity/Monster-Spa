@@ -39,19 +39,23 @@ public class MoveToExit : JobComponentSystem
                 
                 
                 var roomEnt = roomWeAreIn[entity];
-                var buff = buffFromEnt[roomEnt.RoomEntity];
-                
-                //var buff = entityManager.GetBuffer<Monster>(roomEnt.RoomEntity);
-                for (int i = buff.Length-1; i >= 0; i--)
+                if (!roomEnt.RoomEntity.Equals(lobby))
                 {
-                    if (buff[i].Value.Equals(entity))
+                    var buff = buffFromEnt[roomEnt.RoomEntity];
+                
+                    //var buff = entityManager.GetBuffer<Monster>(roomEnt.RoomEntity);
+                    for (int i = buff.Length-1; i >= 0; i--)
                     {
-                        buff.RemoveAt(i);
+                        if (buff[i].Value.Equals(entity))
+                        {
+                            buff.RemoveAt(i);
+                        }
                     }
+                    //need reference to lobby...
+                    //var query = entityManager.CreateEntityQuery(typeof(Tag_Lobby)).ToEntityArray(Allocator.TempJob);
+                    ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = lobby });
                 }
-                //need reference to lobby...
-                //var query = entityManager.CreateEntityQuery(typeof(Tag_Lobby)).ToEntityArray(Allocator.TempJob);
-                ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = lobby });
+                
                 
                 
                 //query.Dispose();

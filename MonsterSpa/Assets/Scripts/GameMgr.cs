@@ -359,8 +359,8 @@ public class GameMgr : MonoBehaviour
                 //if monsterBuff[i]
 
                 Vector3 vectordv = (Vector3) dv;
-                var b = vectordv.magnitude < 0.15f;
-                if (vectordv.magnitude < 0.15f)
+                var b = vectordv.magnitude < 0.6f;
+                if (vectordv.magnitude < 0.6f)
                 {
                     clearedForLanding = false;
 
