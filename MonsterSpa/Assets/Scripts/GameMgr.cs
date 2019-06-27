@@ -289,7 +289,6 @@ public class GameMgr : MonoBehaviour
         {
             var roomState = new RoomState();
             var monsterBuff = entityManager.GetBuffer<Monster>(kvp.Value);
-            Debug.Log(monsterBuff.Length);
 
             for (int i = 0; i < monsterBuff.Length; i++)
             {
@@ -315,7 +314,6 @@ public class GameMgr : MonoBehaviour
 
             if (kvp.Key == hotTub)
             {
-                Debug.Log(roomState.chicks);
                 VictoryConditionManager.g.hotSpringsState = roomState;
             }
             else if (kvp.Key == sauna)

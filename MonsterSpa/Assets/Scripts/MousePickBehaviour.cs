@@ -107,7 +107,6 @@ namespace Unity.Physics.Extensions
         public static RaycastInput CreateRayCastFromMouse()
         {
             var unityRay = Camera.main.ScreenPointToRay(Input.mousePosition);
-            // Debug.DrawRay(unityRay.origin, unityRay.direction, Color.red, 3);
             return new RaycastInput
             {
                 Start = unityRay.origin,
@@ -357,11 +356,8 @@ namespace Unity.Physics.Extensions
                 physicsWorld.CollisionWorld.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), ref hits);
 
                 var index = physicsWorld.GetRigidBodyIndex(TerrainBody.Entity);
-                // Debug.Log("This is the index" + index);
-                // Unity.Physics.Extensions.PhysicsWorldExtensions.GetRigidBodyIndex(physicsWorld, )
                 foreach (var hit in hits.ToArray())
                 {
-                    //Debug.Log("Hit index " + hit.RigidBodyIndex);
                     if (hit.RigidBodyIndex + 1 == index)
                     {                        
                         posComponent.Value.x = hit.Position.x;
@@ -370,21 +366,11 @@ namespace Unity.Physics.Extensions
                         break;
                     }
                 }
-
-                /*
-                var hit = FindRayCastHit(TerrainBody.Entity, physicsWorld.Bodies, hits);
-                if (hit.HasValue)
-                {
-                    posComponent.Value.x = hit.Value.Position.x;
-                    posComponent.Value.z = hit.Value.Position.z;
-                    Positions[entity] = posComponent;
-                }*/
             
                 hits.Dispose();
             }
             else if (m_WasDragging)
             {
-                // TODO: Check if the entity collides with any of the roomss
                 m_WasDragging = false;
                 var physicsWorld = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld;
                 var hits = new NativeList<RaycastHit>(Allocator.TempJob);
