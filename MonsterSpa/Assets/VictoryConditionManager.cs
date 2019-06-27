@@ -196,12 +196,12 @@ public class VictoryConditionManager : MonoBehaviour
                         new RoomState(0,0,0,0)));
         
                     UnmetConditions.Add(new VictoryCondition(3,
-                        new RoomState(5,0,0,0),
+                        new RoomState(4,0,0,0),
                         new RoomState(0,0,0,0),
                         new RoomState(0,0,0,0)));
 
                     playSuccessSound = true;
-                    GameMgr.g.SpawnRoom(GameMgr.g.coldBath);
+                    //GameMgr.g.SpawnRoom(GameMgr.g.coldBath);
                     break;
                 case 3: //Unlock Hundun
                     
@@ -230,7 +230,7 @@ public class VictoryConditionManager : MonoBehaviour
                     
                     playSuccessSound = true;
                     
-                    GameMgr.g.SpawnRoom(GameMgr.g.hotTub);
+                    //GameMgr.g.SpawnRoom(GameMgr.g.hotTub);
                     
                     break;
                 

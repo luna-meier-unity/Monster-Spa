@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using TMPro;
 using Unity.Collections;
 using UnityEngine;
@@ -117,7 +118,7 @@ public class DialogueManager : MonoBehaviour
 
             dialogue.LineGroups = LineGroups;
             
-            Sections.Add(int.Parse(dialogue.MainElement.name.Substring(0,1)),dialogue);
+            Sections.Add(int.Parse(Regex.Match(dialogue.MainElement.name, @"\d+").Value), dialogue);
 
             currentSection = -1;
         }
