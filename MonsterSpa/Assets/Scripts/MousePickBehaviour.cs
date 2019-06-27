@@ -356,7 +356,7 @@ namespace Unity.Physics.Extensions
                         {
                             Entity entity = m_SelectedEntity;
                             Translation posComponent = Positions[entity];
-                            GameMgr.MoveMonsterToRoom(entity, room.Entity);
+                            GameMgr.MoveMonsterToRoom(entity, room.Entity, 10);
                         }
                         
                         break;
