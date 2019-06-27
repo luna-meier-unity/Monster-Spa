@@ -95,7 +95,27 @@ public class GameMgr : MonoBehaviour
 
     public static void MoveMonsterToRoom(Entity monsterEntity, Entity roomEntity, float3 spawnPos, float timeToLeave)
     {
+        
+        
         EntityManager entityManager = World.Active.EntityManager;
+        var thing = entityManager.HasComponent<InsideRoom>(monsterEntity);
+        //we only want to remove from previous room if it had a room to begin with.
+        if (entityManager.GetComponentData<InsideRoom>(monsterEntity).RoomEntity != Entity.Null)
+        {
+            //we need to remove the monster from the room it was in before adding it to the target room
+            var previousBuffer = entityManager
+                .GetBuffer<Monster>(entityManager.GetComponentData<InsideRoom>(monsterEntity).RoomEntity);
+            for (int i = previousBuffer.Length-1; i >= 0; i--)
+            {
+                if (previousBuffer[i].Value.Equals(monsterEntity))
+                {
+                    previousBuffer.RemoveAt(i);
+                }
+            }
+        }
+        
+       
+            
         entityManager.SetComponentData(monsterEntity, new Translation() { Value = spawnPos });
         entityManager.SetComponentData(monsterEntity, new InsideRoom() { RoomEntity = roomEntity });
         entityManager.SetComponentData(monsterEntity, new TimeToLeave() { TimeRemaining = timeToLeave });

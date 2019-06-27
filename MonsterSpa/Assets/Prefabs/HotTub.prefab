@@ -121,7 +121,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   temprature: 120
   Spots: 5
-  SpawnRad: 0
+  SpawnRad: 1
 --- !u!114 &2188002446377251766
 MonoBehaviour:
   m_ObjectHideFlags: 0

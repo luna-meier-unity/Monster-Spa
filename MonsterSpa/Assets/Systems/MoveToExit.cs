@@ -32,9 +32,9 @@ public class MoveToExit : JobComponentSystem
                 translation.Value = directionToExit * monsterspeed + translation.Value;
                 
                 var deltaV = StaticExit.exitPos - translation.Value;
-                if (math.length(deltaV) < 0.1f)
+                if (math.length(deltaV) < 0.5f)
                 {
-                    // TODO: Not working
+                    
                     ecb.AddComponent(index,entity,new Tag_RemoveMonster());
                     //GameMgr.monsters.Remove(entity);
                     
