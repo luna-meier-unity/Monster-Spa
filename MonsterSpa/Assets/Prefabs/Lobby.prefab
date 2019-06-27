@@ -120,3 +120,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   temprature: 68
   Spots: 10
+  SpawnRad: 1

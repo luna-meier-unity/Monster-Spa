@@ -6,6 +6,7 @@ public class ConvertRoom : MonoBehaviour, IConvertGameObjectToEntity
 {
     public float temprature;
     public int Spots;
+    public float SpawnRad;
     public void Convert(Entity entity, EntityManager entityManager, GameObjectConversionSystem conversionSystem)
     {
         var roomTag = new Tag_Room();
@@ -18,6 +19,9 @@ public class ConvertRoom : MonoBehaviour, IConvertGameObjectToEntity
         
         var spots = new RoomSpots();
         spots.Value = Spots;
+        
+        var spawnRadius = new SpawnRadius();
+        spawnRadius.Value = SpawnRad;
 
 
         entityManager.AddBuffer<Monster>(entity);
@@ -25,6 +29,7 @@ public class ConvertRoom : MonoBehaviour, IConvertGameObjectToEntity
         entityManager.AddComponentData(entity, temp);
         entityManager.AddComponentData(entity, name);
         entityManager.AddComponentData(entity,spots);
+        entityManager.AddComponentData(entity,spawnRadius);
 
     }
 }
