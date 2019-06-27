@@ -33,10 +33,7 @@ public class GameMgr : MonoBehaviour
     public GameObject Ghost;
     public GameObject Sandal;
     public GameObject Hundun;
-    //public float spawnInterval;
-
-    //public static List<Entity> monsterEnts = new List<Entity>();
-
+    
     public float spawnrate; //in seconds
     private float countdown;
     private EntityQuery monstersToDestroyQuery;
