@@ -77,11 +77,6 @@ public class GameMgr : MonoBehaviour
         monEnt =  GameObjectConversionUtility.ConvertGameObjectHierarchy(Hundun, World.Active);
         monsterEnts.Add(monEnt);
         
-        
-        //monsters.Add(entityManager.Instantiate(monsterEnts[0]));
-        
-        
-        //entityManager.SetComponentData(monsters[(int)MonsterType.Chick], new InsideRoom(){RoomEntity = rooms[(int)RoomType.Lobby]});
 
     }
 
@@ -123,9 +118,9 @@ public class GameMgr : MonoBehaviour
             monsters.Remove(dyingMon);
             var room = entityManager.GetComponentData<InsideRoom>(dyingMon).RoomEntity;
             var monsterBuffer = entityManager.GetBuffer<Monster>(room);
-            for (int i = monsterBuffer.Length; i < 0; i--)
+            for (int i = monsterBuffer.Length-1; i >= 0; i--)
             {
-                if (monsterBuffer[i].Value == dyingMon)
+                if (monsterBuffer[i].Value.Equals(dyingMon))
                 {
                     monsterBuffer.RemoveAt(i);
                 }
