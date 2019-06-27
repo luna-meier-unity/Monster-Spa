@@ -26,9 +26,5 @@ public class ConvertMonster : MonoBehaviour, IConvertGameObjectToEntity
         entityManager.AddComponentData(entity, happy);
         entityManager.AddComponentData(entity, temperature);
         entityManager.AddComponentData(entity, timeRemaining);
-        entityManager.AddComponentData(entity, new MonsterTypeComponent()
-        {
-            GameObjectId = GetInstanceID(),
-        });
     }
 }
