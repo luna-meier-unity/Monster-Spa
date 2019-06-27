@@ -1,22 +1,10 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.Entities;
-using UnityEngine;
-using System;
-using System.Threading;
-using System.Xml;
 using Unity.Mathematics;
 using Unity.Transforms;
-using UnityEngine.UIElements;
-
-public enum MonsterType
-{
-    Chick = 0,
-    Ghost = 1,
-    Sandal = 2,
-    Hundun = 3
-}
+using UnityEngine;
 
 public enum RoomType
 {
@@ -161,7 +149,8 @@ public class GameMgr : MonoBehaviour
                 return;
             }
 
-            var monsterType = UnityEngine.Random.Range(0, typeof(MonsterType).GetEnumValues().Length - 1);
+            var monsterType = UnityEngine.Random.Range(0, monsterEnts.Count);
+            Debug.Log(monsterType);
             var monsterEnt = entityManager.Instantiate(monsterEnts[monsterType]);
             MoveMonsterToRoom(monsterEnt, roomEntity, spawnPoint.Value);
             countdown = spawnrate;

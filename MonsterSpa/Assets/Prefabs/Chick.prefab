@@ -9,13 +9,13 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4779150490070706105}
-  - component: {fileID: 4779150490070706108}
   - component: {fileID: 4779150490070706109}
   - component: {fileID: 4779150490070706110}
   - component: {fileID: 5953194592113523801}
   - component: {fileID: 7211145239339051966}
   - component: {fileID: -5534573999197098851}
   - component: {fileID: 1878856956380772496}
+  - component: {fileID: -9078175504958863893}
   m_Layer: 0
   m_Name: Chick
   m_TagString: Untagged
@@ -37,19 +37,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!65 &4779150490070706108
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4779150490070706111}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 0.30917618, y: 0.3985381, z: 0.33446106}
-  m_Center: {x: 0.0021431, y: 0.19926906, z: -0.038669333}
 --- !u!114 &4779150490070706109
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -173,3 +160,69 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   IgnoreTriggers: 1
+--- !u!114 &-9078175504958863893
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4779150490070706111}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b275e5f92732148048d7b77e264ac30e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShapeType: 0
+  m_PrimitiveCenter:
+    x: 0.0031713098
+    y: 0.20987521
+    z: -0.03733261
+  m_PrimitiveSize:
+    x: 0.3
+    y: 0.40000004
+    z: 0.32
+  m_PrimitiveOrientation:
+    Value:
+      x: -0
+      y: 0
+      z: 0
+    RotationOrder: 4
+  m_Capsule:
+    Height: 0.40000004
+    Radius: 0.16
+    Axis: 1
+  m_Cylinder:
+    Height: 0.40000004
+    Radius: 0.16
+    Axis: 1
+  m_SphereRadius: 0.20000002
+  m_ConvexRadius: 0.030000001
+  m_CustomMesh: {fileID: 0}
+  m_Material:
+    m_SupportsTemplate: 1
+    m_Template: {fileID: 0}
+    m_IsTrigger:
+      m_Override: 0
+      m_Value: 0
+    m_Friction:
+      m_Override: 0
+      m_Value:
+        Value: 0.5
+        CombineMode: 0
+    m_Restitution:
+      m_Override: 0
+      m_Value:
+        Value: 0
+        CombineMode: 2
+    m_BelongsTo:
+      m_Override: 0
+      m_Value: 0101010101010101010101010101010101010101010101010101010101010101
+    m_CollidesWith:
+      m_Override: 0
+      m_Value: 0101010101010101010101010101010101010101010101010101010101010101
+    m_RaisesCollisionEvents:
+      m_Override: 0
+      m_Value: 0
+    m_CustomFlags:
+      m_Override: 0
+      m_Value: 0000000000000000
