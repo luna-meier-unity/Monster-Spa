@@ -150,9 +150,9 @@ public class GameMgr : MonoBehaviour
             monsters.Remove(dyingMon);
             var room = entityManager.GetComponentData<InsideRoom>(dyingMon).RoomEntity;
             var monsterBuffer = entityManager.GetBuffer<Monster>(room);
-            for (int i = monsterBuffer.Length - 1; i >= 0 ; i--)
+            for (int i = monsterBuffer.Length; i < 0 ; i--)
             {
-                if (monsterBuffer[i].Value.Equals(dyingMon))
+                if (monsterBuffer[i].Value == dyingMon)
                 {
                     monsterBuffer.RemoveAt(i);
                 }
@@ -226,7 +226,7 @@ public class GameMgr : MonoBehaviour
 
         posx = (float) Math.Cos(iterateAngle);
         posz = (float) Math.Sin(iterateAngle);
-        finalPos = roomPos + new float3(posx, 0.0f, posz);
+        finalPos = roomPos + new float3(posx, 0.1f, posz);
 
         return finalPos;
 
