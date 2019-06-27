@@ -189,6 +189,7 @@ public class GameMgr : MonoBehaviour
         EntityManager entityManager = World.Active.EntityManager;
         var roomSpotComp = entityManager.GetComponentData<RoomSpots>(room);
         var roomPos = entityManager.GetComponentData<Translation>(room).Value;
+        
 
 
         //we should check if there is a monster in the spot we are trying to spawn at!
@@ -248,7 +249,11 @@ public class GameMgr : MonoBehaviour
 
         posx = (float) Math.Cos(iterateAngle);
         posz = (float) Math.Sin(iterateAngle);
-        finalPos = roomPos + new float3(posx, 0.1f, posz);
+        //the vector (posx, 0, posz) is a unit vector describing direction of magnitude 1 with the room's position being 0,0,0.
+        var spawnCircle = new float3(posx, 0.05f, posz);
+        float radius = entityManager.GetComponentData<SpawnRadius>(room).Value;
+        //multiply the spawn circle unit vector by the radius to get a position around a circle of the spawn point
+        finalPos = roomPos + (spawnCircle * radius);
 
         return finalPos;
 
