@@ -89,7 +89,7 @@ public class VictoryConditionManager : MonoBehaviour
             new RoomState(0,0,0,0),
             new RoomState(4,0,0,0)));
         
-        /*
+        
         //10////////////////////////////////////////////////////////////////////
         UnmetConditions.Add(new VictoryCondition(10,
             new RoomState(2,0,0,0),
@@ -104,38 +104,43 @@ public class VictoryConditionManager : MonoBehaviour
         UnmetConditions.Add(new VictoryCondition(12,
             new RoomState(0,0,0,0),
             new RoomState(2,0,0,0),
+            new RoomState(0,0,0,0)));
+            
+            UnmetConditions.Add(new VictoryCondition(13,
+            new RoomState(0,0,0,0),
+            new RoomState(0,0,0,0),
             new RoomState(3,0,1,0)));
-        
-        UnmetConditions.Add(new VictoryCondition(13,
-            new RoomState(0,0,0,0),
-            new RoomState(0,0,0,0),
-            new RoomState(1,0,0,1)));
         
         UnmetConditions.Add(new VictoryCondition(14,
             new RoomState(0,0,0,0),
             new RoomState(0,0,0,0),
-            new RoomState(1,0,0,2)));
+            new RoomState(1,0,0,1)));
         
         //15////////////////////////////////////////////////////////////////////
         UnmetConditions.Add(new VictoryCondition(15,
+            new RoomState(0,0,0,0),
+            new RoomState(0,0,0,0),
+            new RoomState(1,0,0,2)));
+        
+        UnmetConditions.Add(new VictoryCondition(16,
             new RoomState(0,0,1,1),
             new RoomState(0,0,0,0),
             new RoomState(0,0,0,0)));
         
-        UnmetConditions.Add(new VictoryCondition(16,
+        UnmetConditions.Add(new VictoryCondition(17,
             new RoomState(0,0,0,0),
             new RoomState(0,0,0,0),
             new RoomState(0,1,1,0)));
         
-        UnmetConditions.Add(new VictoryCondition(17,
+        UnmetConditions.Add(new VictoryCondition(18,
             new RoomState(0,0,0,0),
             new RoomState(0,1,2,0),
             new RoomState(0,0,0,0)));
         
-        UnmetConditions.Add(new VictoryCondition(18,
+        UnmetConditions.Add(new VictoryCondition(19,
             new RoomState(0,0,0,0),
             new RoomState(0,0,1,1),
-            new RoomState(0,0,0,0)));*/
+            new RoomState(0,0,0,0)));
 
         CurrentCheckIndex = 0;
 
