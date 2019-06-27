@@ -175,12 +175,12 @@ MonoBehaviour:
   m_ShapeType: 0
   m_PrimitiveCenter:
     x: -0.0026803613
-    y: 1.1529669
+    y: 0.38
     z: -0.05351633
   m_PrimitiveSize:
-    x: 1.6800003
-    y: 2.31
-    z: 1.0500002
+    x: 0.56
+    y: 0.77
+    z: 0.42
   m_PrimitiveOrientation:
     Value:
       x: -0
@@ -188,15 +188,15 @@ MonoBehaviour:
       z: 0
     RotationOrder: 4
   m_Capsule:
-    Height: 2.31
-    Radius: 0.84000015
+    Height: 0.77
+    Radius: 0.28
     Axis: 1
   m_Cylinder:
-    Height: 1.0500002
-    Radius: 1.155
-    Axis: 2
-  m_SphereRadius: 1.155
-  m_ConvexRadius: 0.05
+    Height: 0.77
+    Radius: 0.28
+    Axis: 1
+  m_SphereRadius: 0.385
+  m_ConvexRadius: 0
   m_CustomMesh: {fileID: 0}
   m_Material:
     m_SupportsTemplate: 1
