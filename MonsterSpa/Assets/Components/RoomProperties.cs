@@ -25,7 +25,12 @@ public struct RoomName : IComponentData
 
 }
 
+[Serializable]
+public struct SpawnRadius : IComponentData
+{
+    public float Value;
 
+}
 
 //we could use a list, but this is hackweek bby!
 public struct Monster : IBufferElementData

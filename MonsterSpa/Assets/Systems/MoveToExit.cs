@@ -23,7 +23,7 @@ public class MoveToExit : JobComponentSystem
         //public ComponentDataFromEntity<InsideRoom> insideRoom;
         //index is the index of this system that is executing, entity is the entity that is being executed on.
         public void Execute(Entity entity, int index, ref Translation translation, ref Rotation rotation, [ReadOnly] ref TimeToLeave timeToLeave)
-        {            
+        {
             if (timeToLeave.TimeRemaining < 0.01)
             {
                 var directionToExit = normalize(StaticExit.exitPos - translation.Value);
@@ -34,12 +34,11 @@ public class MoveToExit : JobComponentSystem
                 // ecb.SetComponent(index, entity, new InsideRoom() { RoomEntity = GameMgr.g.GetRoomEntity(GameMgr.g.lobby) });
 
                 var deltaV = StaticExit.exitPos - translation.Value;
-                if (math.length(deltaV) < 0.1f)
+                if (math.length(deltaV) < 0.5f)
                 {
-                    // TODO: Not working
-                    ecb.AddComponent(index,entity,new Tag_RemoveMonster());                                        
+                    ecb.AddComponent(index,entity,new Tag_RemoveMonster());
                 }
-            }            
+            }
         }
     }
 
@@ -59,7 +58,7 @@ public class MoveToExit : JobComponentSystem
             monsterspeed = 0.01f,
             ecb = endSimulationECB.CreateCommandBuffer().ToConcurrent()
         }.Schedule(this, inputDependencies);
-        
+
         endSimulationECB.AddJobHandleForProducer(job); //this tells the ECB to run after this job is done
 
 
