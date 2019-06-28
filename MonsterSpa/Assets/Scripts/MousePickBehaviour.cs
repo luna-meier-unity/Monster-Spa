@@ -247,7 +247,9 @@ namespace Unity.Physics.Extensions
         RigidBody? m_TerrainBody;
         RigidBody[] m_RoomBodies;
         Entity m_SelectedEntity;
-
+        EntityQuery m_TerrainEntityQuery;
+        EntityQuery m_RoomEntityQuery;
+        
         protected override void OnCreate()
         {
             m_PickSystem = World.GetOrCreateSystem<MousePickSystem>();
@@ -255,65 +257,8 @@ namespace Unity.Physics.Extensions
             {
                 All = new ComponentType[] { typeof(MousePick) }
             });
-        }
-
-        private RigidBody TerrainBody
-        {
-            get
-            {
-                if (m_TerrainBody == null)
-                {
-                    var index = 0;
-                    foreach (var body in m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld.Bodies.ToArray())
-                    {
-                        if (body.Entity == ConvertTerrain.TerrainEntity)
-                        {
-                            m_TerrainBody = body;
-                            break;
-                        }
-                        index++;
-                    }
-                }
-
-                Assert.IsTrue(m_TerrainBody.HasValue);
-                return m_TerrainBody.Value;
-            }
-        }
-
-        private RigidBody[] RoomBodies
-        {
-            get
-            {
-                var bodies = new System.Collections.Generic.List<RigidBody>();
-                if (m_RoomBodies == null)
-                {
-                    foreach (var body in m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld.Bodies.ToArray())
-                    {
-                        if (GameMgr.rooms.FindIndex(r => r == body.Entity) >= 0)
-                        {
-                            bodies.Add(body);
-                        }
-                    }
-                    
-                    m_RoomBodies = bodies.ToArray();                    
-                }
-
-                return m_RoomBodies;
-            }
-        }
-
-        private RaycastHit? FindRayCastHit(Entity targetEntity, NativeSlice<RigidBody> bodies, NativeList<RaycastHit> hits)
-        {
-            foreach (var currentHit in hits.ToArray())
-            {
-                var hitEntity = bodies[currentHit.RigidBodyIndex].Entity;
-                if (hitEntity == targetEntity)
-                {
-                    return currentHit;
-                }
-            }
-
-            return null;
+            m_TerrainEntityQuery = EntityManager.CreateEntityQuery(typeof(Tag_Terrain));
+            m_RoomEntityQuery = EntityManager.CreateEntityQuery(typeof(Tag_Room));
         }
 
         protected override JobHandle OnUpdate(JobHandle inputDeps)
@@ -324,10 +269,6 @@ namespace Unity.Physics.Extensions
             }
 
             var Positions = GetComponentDataFromEntity<Translation>();
-            var TimeToLeave = GetComponentDataFromEntity<TimeToLeave>();
-            var InsideRooms = GetComponentDataFromEntity<InsideRoom>();
-
-            // var Colliders = GetComponentDataFromEntity<Collider>();
 
             // If there's a pick job, wait for it to finish
             if (m_PickSystem.PickJobHandle != null)
@@ -337,6 +278,8 @@ namespace Unity.Physics.Extensions
             
             // If there's a picked entity, drag it
             MousePickSystem.SpringData springData = m_PickSystem.SpringDatas[0];
+            var physicsWorld = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld;
+
             if (springData.Dragging != 0)
             {
                 Entity entity = m_PickSystem.SpringDatas[0].Entity;
@@ -349,47 +292,49 @@ namespace Unity.Physics.Extensions
                 m_WasDragging = true;                
                 Translation posComponent = Positions[entity];
                 m_SelectedEntity = entity;
-
-                // var world = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld.CollisionWorld;                
-                var physicsWorld = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld;                
+       
                 var hits = new NativeList<RaycastHit>(Allocator.TempJob);
                 physicsWorld.CollisionWorld.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), ref hits);
-
-                var index = physicsWorld.GetRigidBodyIndex(TerrainBody.Entity);
-                foreach (var hit in hits.ToArray())
+                var terrainEntities = m_TerrainEntityQuery.ToEntityArray(Allocator.TempJob);
+                foreach (var terrainEntity in terrainEntities) 
                 {
-                    if (hit.RigidBodyIndex + 1 == index)
-                    {                        
-                        posComponent.Value.x = hit.Position.x;
-                        posComponent.Value.z = hit.Position.z;
-                        Positions[entity] = posComponent;
-                        break;
+                    var index = physicsWorld.GetRigidBodyIndex(terrainEntity);
+                    foreach (var hit in hits.ToArray())
+                    {
+                        if (hit.RigidBodyIndex == index)
+                        {
+                            posComponent.Value.x = hit.Position.x;
+                            posComponent.Value.z = hit.Position.z;
+                            Positions[entity] = posComponent;
+                            break;
+                        }
                     }
                 }
-            
+                
                 hits.Dispose();
+                terrainEntities.Dispose();
             }
             else if (m_WasDragging)
             {
                 m_WasDragging = false;
-                var physicsWorld = m_PickSystem.m_BuildPhysicsWorldSystem.PhysicsWorld;
                 var hits = new NativeList<RaycastHit>(Allocator.TempJob);
                 physicsWorld.CollisionWorld.CastRay(MousePickBehaviour.CreateRayCastFromMouse(), ref hits);
-                
-                foreach (var room in RoomBodies)
+
+                var roomEntities = m_RoomEntityQuery.ToEntityArray(Allocator.TempJob);                
+                foreach (var room in roomEntities)
                 {
-                    var hit = FindRayCastHit(room.Entity, physicsWorld.Bodies, hits);
-                    if (hit.HasValue)
+                    var index = physicsWorld.GetRigidBodyIndex(room);
+                    foreach (var hit in hits.ToArray())
                     {
-                        var spawnPoint = GameMgr.FindSpawnInCircle(room.Entity);
-                        if (spawnPoint != null)
+                        if (hit.RigidBodyIndex == index)
                         {
-                            GameMgr.MoveMonsterToRoom(m_SelectedEntity, room.Entity, 10);
+                            GameMgr.MoveMonsterToRoom(m_SelectedEntity, room, 0);
                         }
                     }
                 }
 
-                hits.Dispose();                
+                hits.Dispose();
+                roomEntities.Dispose();
             }
 
             return inputDeps;

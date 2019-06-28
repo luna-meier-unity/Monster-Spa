@@ -10,3 +10,5 @@ public struct Tag_RemoveMonster : IComponentData
 }
 
 public struct Tag_Lobby : IComponentData {}
+
+public struct Tag_Terrain : IComponentData {}
